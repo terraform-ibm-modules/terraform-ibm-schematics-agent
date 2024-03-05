@@ -6,3 +6,8 @@
 #  description = "Description of my output"
 #  value       = "value"
 #}
+
+output "agent_id" {
+  description = "Agent ID"
+  value       = local.agent_id
+}

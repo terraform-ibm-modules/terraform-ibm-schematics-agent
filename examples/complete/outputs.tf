@@ -2,22 +2,12 @@
 # Outputs
 ##############################################################################
 
-output "region" {
-  description = "The region all resources were provisioned in"
-  value       = var.region
+output "vpc_id" {
+  description = "VPC ID"
+  value       = ibm_is_vpc.vpc.id
 }
 
-output "prefix" {
-  description = "The prefix used to name all provisioned resources"
-  value       = var.prefix
-}
-
-output "resource_group_name" {
-  description = "The name of the resource group used"
-  value       = var.resource_group
-}
-
-output "resource_tags" {
-  description = "List of resource tags"
-  value       = var.resource_tags
+output "cluster_id" {
+  description = "Cluster ID"
+  value       = ibm_container_vpc_cluster.cluster.id
 }

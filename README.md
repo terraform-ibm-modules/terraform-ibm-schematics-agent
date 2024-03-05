@@ -19,9 +19,8 @@ TODO: Replace me with description of the module(s) in this repo
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
 ## Overview
-* [terraform-ibm-module-template](#terraform-ibm-module-template)
+* [terraform-ibm-schematics-agent](#terraform-ibm-schematics-agent)
 * [Examples](./examples)
-    * [Basic example](./examples/basic)
     * [Complete example](./examples/complete)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
@@ -89,6 +88,7 @@ statement instead the previous block.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0, <1.6.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.49.0, < 2.0.0 |
 
 ### Modules
 
@@ -96,15 +96,22 @@ No modules.
 
 ### Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [ibm_schematics_agent.schematics_agent_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent) | resource |
+| [ibm_schematics_agent_deploy.schematics_agent_deploy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent_deploy) | resource |
 
 ### Inputs
 
-No inputs.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | Resource Group ID | `string` | n/a | yes |
 
 ### Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_agent_id"></a> [agent\_id](#output\_agent\_id) | Agent ID |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 <!-- Leave this section as is so that your module has a link to local development environment set up steps for contributors to follow -->
