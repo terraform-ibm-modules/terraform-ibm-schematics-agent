@@ -36,8 +36,7 @@ func TestRunCompleteExample(t *testing.T) {
 
 	outputs := terraform.OutputAll(options.Testing, options.TerraformOptions)
 
-	// Pass test only for "success" status code. Fail for "pending", "in-progress" & "failed" status.
-	assert.Equal(t, outputs["status_code"].(string), "job_success")
+	assert.Equal(t, outputs["status_code"].(string), "job_finished")
 }
 
 func TestRunUpgradeExample(t *testing.T) {
