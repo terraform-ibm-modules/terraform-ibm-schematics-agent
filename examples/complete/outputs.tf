@@ -1,23 +1,24 @@
-##############################################################################
-# Outputs
-##############################################################################
-
-output "region" {
-  description = "The region all resources were provisioned in"
-  value       = var.region
+output "cluster_id" {
+  description = "Kubernetes cluster ID."
+  value       = ibm_container_vpc_cluster.cluster.id
 }
 
-output "prefix" {
-  description = "The prefix used to name all provisioned resources"
-  value       = var.prefix
+output "schematics_agent_id" {
+  description = "Schematics agent ID."
+  value       = module.schematics_agent.agent_id
 }
 
-output "resource_group_name" {
-  description = "The name of the resource group used"
-  value       = var.resource_group
+output "schematics_agent_job_log_url" {
+  description = "URL to the full schematics agent deployment job logs."
+  value       = module.schematics_agent.log_url
 }
 
-output "resource_tags" {
-  description = "List of resource tags"
-  value       = var.resource_tags
+output "schematics_agent_status_code" {
+  description = "Final result of the schematics agent deployment job."
+  value       = module.schematics_agent.status_code
+}
+
+output "schematics_agent_status_message" {
+  description = "The outcome of the schematics agent deployment job, in a formatted log string."
+  value       = module.schematics_agent.status_message
 }

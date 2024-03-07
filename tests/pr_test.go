@@ -2,6 +2,7 @@
 package test
 
 import (
+	"github.com/gruntwork-io/terratest/modules/terraform"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,17 +26,22 @@ func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptio
 func TestRunCompleteExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "mod-template", completeExampleDir)
+	options := setupOptions(t, "sa-com", completeExampleDir)
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+
+	outputs := terraform.OutputAll(options.Testing, options.TerraformOptions)
+
+	// Pass test only for "success" status code. Fail for "pending", "in-progress" & "failed" status.
+	assert.Equal(t, outputs["status_code"].(string), "job_success")
 }
 
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "mod-template-upg", completeExampleDir)
+	options := setupOptions(t, "sa-com-upg", completeExampleDir)
 
 	output, err := options.RunTestUpgrade()
 	if !options.UpgradeTestSkipped {

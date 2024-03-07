@@ -21,7 +21,6 @@ TODO: Replace me with description of the module(s) in this repo
 ## Overview
 * [terraform-ibm-schematics-agent](#terraform-ibm-schematics-agent)
 * [Examples](./examples)
-    * [Basic example](./examples/basic)
     * [Complete example](./examples/complete)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
@@ -89,6 +88,7 @@ statement instead the previous block.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0, <1.7.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.49.0, < 2.0.0 |
 
 ### Modules
 
@@ -96,15 +96,36 @@ No modules.
 
 ### Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [ibm_schematics_agent.schematics_agent_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent) | resource |
+| [ibm_schematics_agent_deploy.schematics_agent_deploy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent_deploy) | resource |
 
 ### Inputs
 
-No inputs.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_agent_description"></a> [agent\_description](#input\_agent\_description) | The schematics agent description. | `string` | `null` | no |
+| <a name="input_agent_location"></a> [agent\_location](#input\_agent\_location) | The location where the schematics agent is deployed in the user environment. | `string` | `"us-south"` | no |
+| <a name="input_agent_name"></a> [agent\_name](#input\_agent\_name) | The schematics agent name. | `string` | n/a | yes |
+| <a name="input_agent_resource_group_id"></a> [agent\_resource\_group\_id](#input\_agent\_resource\_group\_id) | The resource group ID of the schematics resource group. | `string` | n/a | yes |
+| <a name="input_agent_version"></a> [agent\_version](#input\_agent\_version) | The schematics agent version. | `string` | `"1.0.1-beta"` | no |
+| <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | ID of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
+| <a name="input_cluster_resource_group_id"></a> [cluster\_resource\_group\_id](#input\_cluster\_resource\_group\_id) | Resource group ID of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
+| <a name="input_cos_bucket_name"></a> [cos\_bucket\_name](#input\_cos\_bucket\_name) | The COS bucket name to store the schematics agent logs. | `string` | n/a | yes |
+| <a name="input_cos_bucket_region"></a> [cos\_bucket\_region](#input\_cos\_bucket\_region) | The COS bucket region. | `string` | n/a | yes |
+| <a name="input_cos_instance_name"></a> [cos\_instance\_name](#input\_cos\_instance\_name) | The COS instance name where the bucket is created for the schematics agent logs. | `string` | n/a | yes |
+| <a name="input_infra_type"></a> [infra\_type](#input\_infra\_type) | Type of target agent infrastructure. Allowed values: `ibm_kubernetes`, `ibm_openshift` and `ibm_satellite`. | `string` | `"ibm_kubernetes"` | no |
+| <a name="input_schematics_location"></a> [schematics\_location](#input\_schematics\_location) | List of locations supported by IBM Cloud Schematics service. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`. | `string` | `"us-south"` | no |
 
 ### Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_agent_id"></a> [agent\_id](#output\_agent\_id) | Schematics agent ID. |
+| <a name="output_log_url"></a> [log\_url](#output\_log\_url) | URL to the full schematics agent deployment job logs. |
+| <a name="output_status_code"></a> [status\_code](#output\_status\_code) | Final result of the schematics agent deployment job. |
+| <a name="output_status_message"></a> [status\_message](#output\_status\_message) | The outcome of the schematics agent deployment job, in a formatted log string. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 <!-- Leave this section as is so that your module has a link to local development environment set up steps for contributors to follow -->
