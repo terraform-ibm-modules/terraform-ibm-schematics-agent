@@ -1,6 +1,6 @@
-########################################################################################################################
+############################################################################
 # Resource Group
-########################################################################################################################
+############################################################################
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
@@ -69,14 +69,14 @@ module "schematics_agent" {
   source                    = "../../"
   infra_type                = "ibm_kubernetes"
   cluster_id                = ibm_container_vpc_cluster.cluster.id
-  cluster_resource_group_id = module.resource_group.resource_group_id
+  cluster_resource_group_id = module.resource_group.resource_group_name
   cos_instance_name         = module.cos.cos_instance_name
   cos_bucket_name           = module.cos.bucket_name
   cos_bucket_region         = module.cos.bucket_region
   agent_location            = var.region
   agent_description         = "${var.prefix}-agent-description"
   agent_name                = "${var.prefix}-agent"
-  agent_resource_group_id   = module.resource_group.resource_group_name
+  agent_resource_group_id   = module.resource_group.resource_group_id
   schematics_location       = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
   agent_version             = var.agent_version
 }
