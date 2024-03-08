@@ -2,7 +2,6 @@
 package test
 
 import (
-	"github.com/gruntwork-io/terratest/modules/terraform"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,9 +42,12 @@ func TestRunCompleteExample(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 
-	outputs := terraform.OutputAll(options.Testing, options.TerraformOptions)
-
-	assert.Equal(t, outputs["status_code"].(string), "job_finished")
+	outputs := options.LastTestTerraformOutputs
+	expectedOutputs := []string{"status_code"}
+	_, outputErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+	if assert.NoErrorf(t, outputErr, "Some outputs not found or nil.") {
+		assert.Equal(t, outputs["status_code"].(string), "job_finished")
+	}
 }
 
 func TestRunUpgradeExample(t *testing.T) {
