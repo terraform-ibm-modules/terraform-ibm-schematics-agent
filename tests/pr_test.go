@@ -14,6 +14,11 @@ const resourceGroup = "geretain-test-resources"
 const completeExampleDir = "examples/complete"
 const region = "us-south"
 
+// temporarily ignore destroy for schematics_agent_deploy as its currently in beta.
+var ignoreDestroys = []string{
+	"module.schematics_agent.ibm_schematics_agent_deploy.schematics_agent_deploy",
+}
+
 func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
@@ -21,6 +26,9 @@ func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptio
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
 		Region:        region,
+		IgnoreDestroys: testhelper.Exemptions{
+			List: ignoreDestroys,
+		},
 	})
 	return options
 }
