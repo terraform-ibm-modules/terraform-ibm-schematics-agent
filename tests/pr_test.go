@@ -43,7 +43,7 @@ func TestRunCompleteExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 
 	outputs := options.LastTestTerraformOutputs
-	expectedOutputs := []string{"status_code"}
+	expectedOutputs := []string{"schematics_agent_status_code"}
 	_, outputErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
 	if assert.NoErrorf(t, outputErr, "Some outputs not found or nil.") {
 		assert.Equal(t, outputs["schematics_agent_status_code"].(string), "job_finished")
