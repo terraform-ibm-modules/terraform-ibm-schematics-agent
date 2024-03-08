@@ -16,6 +16,7 @@ const region = "us-south"
 
 // temporarily ignore destroy for schematics_agent_deploy as its currently in beta.
 var ignoreDestroys = []string{
+	"module.schematics_agent.ibm_schematics_agent.schematics_agent_instance",
 	"module.schematics_agent.ibm_schematics_agent_deploy.schematics_agent_deploy",
 }
 
