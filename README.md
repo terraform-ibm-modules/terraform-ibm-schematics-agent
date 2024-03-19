@@ -6,8 +6,8 @@ Update status and "latest release" badges:
   1. For the status options, see https://terraform-ibm-modules.github.io/documentation/#/badge-status
   2. Update the "latest release" badge to point to the correct module's repo. Replace "terraform-ibm-module-template" in two places.
 -->
-[![Implemented (No quality checks)](https://img.shields.io/badge/Status-Implemented%20(No%20quality%20checks)-yellowgreen)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
-[![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-module-template?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-module-template/releases/latest)
+[![Stable (With quality checks)](https://img.shields.io/badge/Status-Stable%20(With%20quality%20checks)-green)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
+[![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-schematics-agent?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-schematics-agent/releases/latest)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
@@ -23,7 +23,7 @@ More information about the IBM Schematics Agent can be found [here](https://clou
 ## Overview
 * [terraform-ibm-schematics-agent](#terraform-ibm-schematics-agent)
 * [Examples](./examples)
-    * [Complete example](./examples/complete)
+    * [Kubernetes example](./examples/kubernetes)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
@@ -50,6 +50,27 @@ unless real values don't help users know what to change.
 -->
 
 ```hcl
+
+provider "ibm" {
+  ibmcloud_api_key = "XXXXXXXXXX"
+  region           = "us-south"
+}
+module "schematics_agent" {
+  source                    = "terraform-ibm-modules/schematics-agent/ibm"
+  version                   = "latest" # Replace "latest" with a release version to lock into a specific release
+  infra_type                = "ibm_kubernetes" # ibm_kubernetes, ibm_openshift, ibm_satellite.
+  cluster_id                = "<cluster-id>"
+  cluster_resource_group_id = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
+  cos_instance_name         = "<cos-instance-name>"
+  cos_bucket_name           = "<cos-bucket-name>"
+  cos_bucket_region         = "<cos-bucket-region>"
+  agent_location            = "us-south"
+  agent_description         = "schematics agent description"
+  agent_name                = "k8s-schematics-agent"
+  agent_resource_group_id   = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
+  schematics_location       = "us-south" # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
+  agent_version             = "<agent-version>"
+}
 
 ```
 
@@ -124,6 +145,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_agent_crn"></a> [agent\_crn](#output\_agent\_crn) | Schematics agent CRN. |
 | <a name="output_agent_id"></a> [agent\_id](#output\_agent\_id) | Schematics agent ID. |
 | <a name="output_log_url"></a> [log\_url](#output\_log\_url) | URL to the full schematics agent deployment job logs. |
 | <a name="output_status_code"></a> [status\_code](#output\_status\_code) | Final result of the schematics agent deployment job. |

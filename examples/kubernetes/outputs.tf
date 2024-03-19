@@ -8,6 +8,11 @@ output "schematics_agent_id" {
   value       = module.schematics_agent.agent_id
 }
 
+output "schematics_agent_crn" {
+  description = "Schematics agent CRN."
+  value       = module.schematics_agent.agent_crn
+}
+
 output "schematics_agent_job_log_url" {
   description = "URL to the full schematics agent deployment job logs."
   value       = module.schematics_agent.log_url

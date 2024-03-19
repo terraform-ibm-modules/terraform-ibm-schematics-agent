@@ -10,7 +10,7 @@ import (
 
 // Use existing resource group
 const resourceGroup = "geretain-test-resources"
-const completeExampleDir = "examples/complete"
+const kubernetesExampleDir = "examples/kubernetes"
 const region = "us-south"
 
 // temporarily ignore destroy for schematics_agent_deploy as its currently in beta.
@@ -33,10 +33,10 @@ func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptio
 	return options
 }
 
-func TestRunCompleteExample(t *testing.T) {
+func TestRunKubernetesExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "sa-com", completeExampleDir)
+	options := setupOptions(t, "sa-k8s", kubernetesExampleDir)
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
@@ -53,7 +53,7 @@ func TestRunCompleteExample(t *testing.T) {
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "sa-com-upg", completeExampleDir)
+	options := setupOptions(t, "sa-k8s-upg", kubernetesExampleDir)
 
 	output, err := options.RunTestUpgrade()
 	if !options.UpgradeTestSkipped {

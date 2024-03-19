@@ -1,6 +1,11 @@
 output "agent_id" {
   description = "Schematics agent ID."
-  value       = local.agent_id
+  value       = ibm_schematics_agent.schematics_agent_instance.id
+}
+
+output "agent_crn" {
+  description = "Schematics agent CRN."
+  value       = ibm_schematics_agent.schematics_agent_instance.agent_crn
 }
 
 output "log_url" {
