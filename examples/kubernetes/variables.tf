@@ -13,7 +13,7 @@ variable "region" {
 variable "prefix" {
   type        = string
   description = "Prefix to append to all resources created by this example"
-  default     = "complete"
+  default     = "sa-com"
 }
 
 variable "resource_group" {
@@ -26,4 +26,10 @@ variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to created resources"
   default     = []
+}
+
+variable "agent_version" {
+  type        = string
+  description = "The schematics agent version."
+  default     = "1.0.1-beta"
 }
