@@ -51,7 +51,6 @@ resource "ibm_is_subnet" "subnet" {
 resource "ibm_container_vpc_cluster" "cluster" {
   name              = "${var.prefix}-cluster"
   vpc_id            = ibm_is_vpc.vpc.id
-  kube_version      = "1.28.7"
   flavor            = "bx2.4x16"
   resource_group_id = module.resource_group.resource_group_id
   worker_count      = 3
