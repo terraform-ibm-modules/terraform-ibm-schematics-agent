@@ -13,16 +13,16 @@ resource "ibm_schematics_agent" "schematics_agent_instance" {
   resource_group      = var.agent_resource_group_id
   schematics_location = var.schematics_location
   version             = var.agent_version
-
-  depends_on = [time_sleep.wait_30_seconds]
 }
 
 resource "time_sleep" "wait_30_seconds" {
-  depends_on = [ibm_schematics_agent_deploy.schematics_agent_deploy]
+  depends_on = [ibm_schematics_agent.schematics_agent_instance]
 
   destroy_duration = "30s"
 }
 
 resource "ibm_schematics_agent_deploy" "schematics_agent_deploy" {
+  depends_on = [time_sleep.wait_30_seconds]
+
   agent_id = ibm_schematics_agent.schematics_agent_instance.id
 }
