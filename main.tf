@@ -15,14 +15,6 @@ resource "ibm_schematics_agent" "schematics_agent_instance" {
   version             = var.agent_version
 }
 
-resource "time_sleep" "wait_30_seconds" {
-  depends_on = [ibm_schematics_agent.schematics_agent_instance]
-
-  destroy_duration = "30s"
-}
-
 resource "ibm_schematics_agent_deploy" "schematics_agent_deploy" {
-  depends_on = [time_sleep.wait_30_seconds]
-
   agent_id = ibm_schematics_agent.schematics_agent_instance.id
 }
