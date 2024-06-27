@@ -17,6 +17,7 @@ Creates an IBM Schematics Agent.
 
 More information about the IBM Schematics Agent can be found [here](https://cloud.ibm.com/docs/schematics?topic=schematics-deploy-agent-overview&interface=ui)
 
+**Limitation:** Currently there's a limitation to destroy Schematics Agent using terraform, but it can be deleted using CLI and API. Provider issue - https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5475
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
