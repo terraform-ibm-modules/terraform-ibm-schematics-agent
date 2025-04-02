@@ -75,7 +75,7 @@ variable "schematics_location" {
 
 variable "agent_version" {
   type        = string
-  description = "The schematics agent version."
+  description = "The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases"
   nullable    = false
-  default     = "1.0.1-beta"
+  default     = "1.3.1"
 }

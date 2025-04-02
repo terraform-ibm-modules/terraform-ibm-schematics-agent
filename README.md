@@ -133,7 +133,7 @@ No modules.
 | <a name="input_agent_location"></a> [agent\_location](#input\_agent\_location) | The location where the schematics agent is deployed in the user environment. | `string` | `"us-south"` | no |
 | <a name="input_agent_name"></a> [agent\_name](#input\_agent\_name) | The schematics agent name. | `string` | n/a | yes |
 | <a name="input_agent_resource_group_id"></a> [agent\_resource\_group\_id](#input\_agent\_resource\_group\_id) | The resource group ID of the schematics resource group. | `string` | n/a | yes |
-| <a name="input_agent_version"></a> [agent\_version](#input\_agent\_version) | The schematics agent version. | `string` | `"1.0.1-beta"` | no |
+| <a name="input_agent_version"></a> [agent\_version](#input\_agent\_version) | The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases | `string` | `"1.3.1"` | no |
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | ID of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
 | <a name="input_cluster_resource_group_id"></a> [cluster\_resource\_group\_id](#input\_cluster\_resource\_group\_id) | Resource group ID of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
 | <a name="input_cos_bucket_name"></a> [cos\_bucket\_name](#input\_cos\_bucket\_name) | The COS bucket name to store the schematics agent logs. | `string` | n/a | yes |

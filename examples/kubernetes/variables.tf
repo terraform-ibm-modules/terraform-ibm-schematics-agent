@@ -27,9 +27,3 @@ variable "resource_tags" {
   description = "Optional list of tags to be added to created resources"
   default     = []
 }
-
-variable "agent_version" {
-  type        = string
-  description = "The schematics agent version."
-  default     = "1.0.1-beta"
-}

@@ -77,5 +77,4 @@ module "schematics_agent" {
   agent_name                = "${var.prefix}-agent"
   agent_resource_group_id   = module.resource_group.resource_group_id
   schematics_location       = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
-  agent_version             = var.agent_version
 }
