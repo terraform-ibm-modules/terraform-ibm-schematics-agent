@@ -77,5 +77,5 @@ variable "agent_version" {
   type        = string
   description = "The schematics agent version."
   nullable    = false
-  default     = "1.0.1-beta"
+  default     = "1.3.1"
 }
