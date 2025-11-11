@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.2.1"
+  version = "1.4.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos" {
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "10.1.5"
+  version                = "10.5.9"
   resource_group_id      = module.resource_group.resource_group_id
   region                 = var.region
   cos_instance_name      = "${var.prefix}-cos"
@@ -68,13 +68,19 @@ module "schematics_agent" {
   source                    = "../../"
   infra_type                = "ibm_kubernetes"
   cluster_id                = ibm_container_vpc_cluster.cluster.id
-  cluster_resource_group_id = module.resource_group.resource_group_name
+  cluster_resource_group_id = module.resource_group.resource_group_id
   cos_instance_name         = module.cos.cos_instance_name
   cos_bucket_name           = module.cos.bucket_name
   cos_bucket_region         = module.cos.bucket_region
-  agent_location            = var.region
+  agent_location            = var.agent_location
   agent_description         = "${var.prefix}-agent-description"
   agent_name                = "${var.prefix}-agent"
   agent_resource_group_id   = module.resource_group.resource_group_id
   schematics_location       = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
+  agent_version             = var.agent_version
+  agent_tags                = var.agent_tags
+  agent_metadata_name       = var.agent_metadata_name
+  agent_metadata_value      = var.agent_metadata_value
+  run_destroy_resources     = var.run_destroy_resources
+  agent_state               = var.agent_state
 }

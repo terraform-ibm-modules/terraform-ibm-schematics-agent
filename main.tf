@@ -7,12 +7,21 @@ resource "ibm_schematics_agent" "schematics_agent_instance" {
     cos_bucket_name        = var.cos_bucket_name
     cos_bucket_region      = var.cos_bucket_region
   }
-  agent_location      = var.agent_location
-  description         = var.agent_description
-  name                = var.agent_name
-  resource_group      = var.agent_resource_group_id
-  schematics_location = var.schematics_location
-  version             = var.agent_version
+  agent_metadata {
+    name  = var.agent_metadata_name
+    value = var.agent_metadata_value
+  }
+  agent_location        = var.agent_location
+  description           = var.agent_description
+  name                  = var.agent_name
+  resource_group        = var.agent_resource_group_id
+  schematics_location   = var.schematics_location
+  version               = var.agent_version
+  tags                  = var.agent_tags
+  run_destroy_resources = var.run_destroy_resources
+  user_state {
+    state = var.agent_state
+  }
 }
 
 resource "ibm_schematics_agent_deploy" "schematics_agent_deploy" {
