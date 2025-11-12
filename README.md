@@ -17,7 +17,7 @@ Creates an IBM Schematics Agent.
 
 More information about the IBM Schematics Agent can be found [here](https://cloud.ibm.com/docs/schematics?topic=schematics-deploy-agent-overview&interface=ui)
 
-**Limitation:** Currently there's a limitation to destroy Schematics Agent using terraform, but it can be deleted using CLI and API. Provider issue - https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5475
+**Limitation:** The users who has admin role on cluster can install Schematics Agent.
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -57,20 +57,25 @@ provider "ibm" {
   region           = "us-south"
 }
 module "schematics_agent" {
-  source                    = "terraform-ibm-modules/schematics-agent/ibm"
-  version                   = "latest" # Replace "latest" with a release version to lock into a specific release
-  infra_type                = "ibm_kubernetes" # ibm_kubernetes, ibm_openshift, ibm_satellite.
-  cluster_id                = "<cluster-id>"
-  cluster_resource_group_id = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
-  cos_instance_name         = "<cos-instance-name>"
-  cos_bucket_name           = "<cos-bucket-name>"
-  cos_bucket_region         = "<cos-bucket-region>"
-  agent_location            = "us-south"
-  agent_description         = "schematics agent description"
-  agent_name                = "k8s-schematics-agent"
-  agent_resource_group_id   = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
-  schematics_location       = "us-south" # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
-  agent_version             = "<agent-version>"
+  source                      = "terraform-ibm-modules/schematics-agent/ibm"
+  version                     = "latest" # Replace "latest" with a release version to lock into a specific release
+  infra_type                  = "ibm_kubernetes" # ibm_kubernetes, ibm_openshift, ibm_satellite.
+  cluster_id                  = "<cluster-id>"
+  cluster_resource_group_name = "Default"
+  cos_instance_name           = "<cos-instance-name>"
+  cos_bucket_name             = "<cos-bucket-name>"
+  cos_bucket_region           = "<cos-bucket-region>"
+  agent_location              = "us-south"
+  agent_description           = "schematics agent description"
+  agent_name                  = "k8s-schematics-agent"
+  agent_resource_group_name   = "Default"
+  schematics_location         = "us-south" # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
+  agent_version               = "<agent-version>"
+  agent_tags                  = []
+  agent_metadata_name         = <agent-metadata-name>
+  agent_metadata_value        = <agent-metadata-value>
+  run_destroy_resources       = <run-destroy-resources>
+  agent_state                 = <agent-state>
 }
 
 ```
@@ -85,17 +90,16 @@ information in the console at
 Manage > Access (IAM) > Access groups > Access policies.
 -->
 
-<!--
 You need the following permissions to run this module.
 
 - Account Management
-    - **Sample Account Service** service
-        - `Editor` platform access
-        - `Manager` service access
+    - **Resource group**
+        - `Viewer` access
     - IAM Services
-        - **Sample Cloud Service** service
-            - `Administrator` platform access
--->
+        - **Schematics** service
+            - `Writer` service access
+            - `Manager` service access
+
 
 <!-- NO PERMISSIONS FOR MODULE
 If no permissions are required for the module, uncomment the following
