@@ -65,22 +65,22 @@ resource "ibm_container_vpc_cluster" "cluster" {
 ##############################################################################
 
 module "schematics_agent" {
-  source                    = "../../"
-  infra_type                = "ibm_kubernetes"
-  cluster_id                = ibm_container_vpc_cluster.cluster.id
-  cluster_resource_group_id = module.resource_group.resource_group_id
-  cos_instance_name         = module.cos.cos_instance_name
-  cos_bucket_name           = module.cos.bucket_name
-  cos_bucket_region         = module.cos.bucket_region
-  agent_location            = var.agent_location
-  agent_description         = "${var.prefix}-agent-description"
-  agent_name                = "${var.prefix}-agent"
-  agent_resource_group_id   = module.resource_group.resource_group_id
-  schematics_location       = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
-  agent_version             = var.agent_version
-  agent_tags                = var.agent_tags
-  agent_metadata_name       = var.agent_metadata_name
-  agent_metadata_value      = var.agent_metadata_value
-  run_destroy_resources     = var.run_destroy_resources
-  agent_state               = var.agent_state
+  source                      = "../../"
+  infra_type                  = "ibm_kubernetes"
+  cluster_id                  = ibm_container_vpc_cluster.cluster.id
+  cluster_resource_group_name = module.resource_group.resource_group_name
+  cos_instance_name           = module.cos.cos_instance_name
+  cos_bucket_name             = module.cos.bucket_name
+  cos_bucket_region           = module.cos.bucket_region
+  agent_location              = var.agent_location
+  agent_description           = "${var.prefix}-agent-description"
+  agent_name                  = "${var.prefix}-agent"
+  agent_resource_group_name   = module.resource_group.resource_group_name
+  schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
+  agent_version               = var.agent_version
+  agent_tags                  = var.agent_tags
+  agent_metadata_name         = var.agent_metadata_name
+  agent_metadata_value        = var.agent_metadata_value
+  run_destroy_resources       = var.run_destroy_resources
+  agent_state                 = var.agent_state
 }

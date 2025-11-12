@@ -14,9 +14,9 @@ variable "cluster_id" {
   nullable    = false
 }
 
-variable "cluster_resource_group_id" {
+variable "cluster_resource_group_name" {
   type        = string
-  description = "Resource group ID of the target cluster where the schematics agent will be installed."
+  description = "The resource group name of the target cluster where the schematics agent will be installed."
   nullable    = false
 }
 
@@ -62,9 +62,9 @@ variable "agent_name" {
   nullable    = false
 }
 
-variable "agent_resource_group_id" {
+variable "agent_resource_group_name" {
   type        = string
-  description = "The resource group ID for the schematics agent."
+  description = "The resource group name for the schematics agent."
   nullable    = false
 }
 
