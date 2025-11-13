@@ -27,3 +27,16 @@ resource "ibm_schematics_agent" "schematics_agent_instance" {
 resource "ibm_schematics_agent_deploy" "schematics_agent_deploy" {
   agent_id = ibm_schematics_agent.schematics_agent_instance.id
 }
+
+resource "null_resource" "agent_deployment_status" {
+
+  depends_on = [ibm_schematics_agent_deploy.schematics_agent_deploy]
+
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/verify_agent_status.sh"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      AGENT_ID = ibm_schematics_agent.schematics_agent_instance.id
+    }
+  }
+}

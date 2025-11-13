@@ -2,18 +2,19 @@
 package test
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
 
 // Use existing resource group
 const resourceGroup = "geretain-test-resources"
 const kubernetesExampleDir = "examples/kubernetes"
-
-const region = "us-south"
 
 // temporarily ignore destroy for schematics_agent_deploy as its currently in beta. https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5475 - fixed in 1.70.0
 
@@ -26,23 +27,21 @@ func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptio
 	// region := validRegions[rand.Intn(len(validRegions))]
 	// agentLocation := validAgentLocation[rand.Intn(len(validAgentLocation))]
 
+	const region = "us-south"
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  dir,
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
 		Region:        region,
-		// IgnoreDestroys: testhelper.Exemptions{
-		// 	List: ignoreDestroys,
-		// },
 	})
 	return options
 }
 
-func TestRunKubernetesExample(t *testing.T) {
+func TestRunKubernetesExample1(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "sa-k8s", kubernetesExampleDir)
+	options := setupOptions(t, "agent", kubernetesExampleDir)
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
@@ -56,91 +55,74 @@ func TestRunKubernetesExample(t *testing.T) {
 	}
 }
 
-// func TestRunUpgradeExample(t *testing.T) {
-// 	t.Parallel()
+var validRegions = []string{
+	"us-south",
+	"eu-de",
+	"eu-gb",
+	"us-east",
+}
 
-// 	options := setupOptions(t, "sa-k8s-upg", kubernetesExampleDir)
+var validAgentLocation = []string{
+	"us-south",
+	"eu-de",
+	"eu-gb",
+	"us-east",
+	"ca-mon",
+	"eu-fr2",
+	"ca-tor",
+}
 
-// 	output, err := options.RunTestUpgrade()
-// 	if !options.UpgradeTestSkipped {
-// 		assert.Nil(t, err, "This should not have errored")
-// 		assert.NotNil(t, output, "Expected some output")
-// 	}
-// }
+func TestRunKubernetesExampleInSchematics(t *testing.T) {
+	t.Parallel()
 
-// var validRegions = []string{
-// 	"us-south",
-// 	"eu-de",
-// 	"eu-gb",
-// 	"us-east",
-// }
+	region := validRegions[rand.Intn(len(validRegions))]
+	agentLocation := validAgentLocation[rand.Intn(len(validAgentLocation))]
 
-// var validAgentLocation = []string{
-// 	"us-south",
-// 	"eu-de",
-// 	"eu-gb",
-// 	"us-east",
-// 	"ca-mon",
-// 	"eu-fr2",
-// 	"ca-tor",
-// }
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing:                t,
+		Prefix:                 "sa-k8s",
+		ResourceGroup:          resourceGroup,
+		TemplateFolder:         kubernetesExampleDir,
+		WaitJobCompleteMinutes: 360,
+		TarIncludePatterns: []string{"*.tf",
+			kubernetesExampleDir + "/*.tf",
+		},
+	})
 
-// func TestRunKubernetesExampleInSchematics(t *testing.T) {
-// 	t.Parallel()
+	options.SkipTestTearDown = true
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "region", Value: region, DataType: "string"},
+		{Name: "agent_location", Value: agentLocation, DataType: "string"},
+	}
 
-// 	region := validRegions[rand.Intn(len(validRegions))]
-// 	agentLocation := validAgentLocation[rand.Intn(len(validAgentLocation))]
+	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
+}
 
-// 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-// 		Testing:                t,
-// 		Prefix:                 "sa-k8s",
-// 		ResourceGroup:          resourceGroup,
-// 		TemplateFolder:         kubernetesExampleDir,
-// 		WaitJobCompleteMinutes: 360,
-// 		TarIncludePatterns: []string{"*.tf",
-// 			kubernetesExampleDir + "/*.tf",
-// 		},
-// 		IgnoreDestroys: testhelper.Exemptions{
-// 			List: ignoreDestroys,
-// 		},
-// 	})
+func TestRunUpgradeSchematics(t *testing.T) {
+	t.Parallel()
 
-// 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-// 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-// 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-// 		{Name: "region", Value: region, DataType: "string"},
-// 		{Name: "agent_location", Value: agentLocation, DataType: "string"},
-// 	}
+	region := validRegions[rand.Intn(len(validRegions))]
+	agentLocation := validAgentLocation[rand.Intn(len(validAgentLocation))]
 
-// 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
-// }
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing:                t,
+		Prefix:                 "sa-k8s-upg",
+		ResourceGroup:          resourceGroup,
+		TemplateFolder:         kubernetesExampleDir,
+		WaitJobCompleteMinutes: 360,
+		TarIncludePatterns: []string{"*.tf",
+			kubernetesExampleDir + "/*.tf",
+		},
+	})
 
-// func TestRunUpgradeSchematics(t *testing.T) {
-// 	t.Parallel()
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "region", Value: region, DataType: "string"},
+		{Name: "agent_location", Value: agentLocation, DataType: "string"},
+	}
 
-// 	region := validRegions[rand.Intn(len(validRegions))]
-// 	agentLocation := validAgentLocation[rand.Intn(len(validAgentLocation))]
-
-// 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-// 		Testing:                t,
-// 		Prefix:                 "sa-k8s-upg",
-// 		ResourceGroup:          resourceGroup,
-// 		TemplateFolder:         kubernetesExampleDir,
-// 		WaitJobCompleteMinutes: 360,
-// 		TarIncludePatterns: []string{"*.tf",
-// 			kubernetesExampleDir + "/*.tf",
-// 		},
-// 		IgnoreDestroys: testhelper.Exemptions{
-// 			List: ignoreDestroys,
-// 		},
-// 	})
-
-// 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-// 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-// 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-// 		{Name: "region", Value: region, DataType: "string"},
-// 		{Name: "agent_location", Value: agentLocation, DataType: "string"},
-// 	}
-
-// 	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
-// }
+	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
+}

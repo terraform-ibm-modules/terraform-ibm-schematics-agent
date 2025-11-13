@@ -62,7 +62,7 @@ variable "agent_tags" {
 variable "run_destroy_resources" {
   type        = number
   description = "Set this value greater than zero to destroy resources associated with agent deployment."
-  default     = 1
+  default     = 0
 }
 
 variable "agent_state" {
