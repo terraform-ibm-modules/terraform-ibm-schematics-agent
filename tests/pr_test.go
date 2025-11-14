@@ -83,6 +83,7 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
 			kubernetesExampleDir + "/*.tf",
+			"scripts/*.sh",
 		},
 	})
 
@@ -111,6 +112,7 @@ func TestRunUpgradeSchematics(t *testing.T) {
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
 			kubernetesExampleDir + "/*.tf",
+			"scripts/*.sh",
 		},
 	})
 
