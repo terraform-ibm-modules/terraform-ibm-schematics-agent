@@ -17,7 +17,7 @@ Creates an IBM Schematics Agent.
 
 More information about the IBM Schematics Agent can be found [here](https://cloud.ibm.com/docs/schematics?topic=schematics-deploy-agent-overview&interface=ui)
 
-**Limitation:** Currently there's a limitation to destroy Schematics Agent using terraform, but it can be deleted using CLI and API. Provider issue - https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5475
+**Limitation:** The users who has admin role on cluster can install Schematics Agent.
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -57,20 +57,25 @@ provider "ibm" {
   region           = "us-south"
 }
 module "schematics_agent" {
-  source                    = "terraform-ibm-modules/schematics-agent/ibm"
-  version                   = "latest" # Replace "latest" with a release version to lock into a specific release
-  infra_type                = "ibm_kubernetes" # ibm_kubernetes, ibm_openshift, ibm_satellite.
-  cluster_id                = "<cluster-id>"
-  cluster_resource_group_id = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
-  cos_instance_name         = "<cos-instance-name>"
-  cos_bucket_name           = "<cos-bucket-name>"
-  cos_bucket_region         = "<cos-bucket-region>"
-  agent_location            = "us-south"
-  agent_description         = "schematics agent description"
-  agent_name                = "k8s-schematics-agent"
-  agent_resource_group_id   = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
-  schematics_location       = "us-south" # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
-  agent_version             = "<agent-version>"
+  source                      = "terraform-ibm-modules/schematics-agent/ibm"
+  version                     = "latest" # Replace "latest" with a release version to lock into a specific release
+  infra_type                  = "ibm_kubernetes" # ibm_kubernetes, ibm_openshift, ibm_satellite.
+  cluster_id                  = "<cluster-id>"
+  cluster_resource_group_name = "Default"
+  cos_instance_name           = "<cos-instance-name>"
+  cos_bucket_name             = "<cos-bucket-name>"
+  cos_bucket_region           = "<cos-bucket-region>"
+  agent_location              = "us-south"
+  agent_description           = "schematics agent description"
+  agent_name                  = "k8s-schematics-agent"
+  agent_resource_group_name   = "Default"
+  schematics_location         = "us-south" # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
+  agent_version               = "<agent-version>"
+  agent_tags                  = []
+  agent_metadata_name         = <agent-metadata-name>
+  agent_metadata_value        = <agent-metadata-value>
+  run_destroy_resources       = <run-destroy-resources>
+  agent_state                 = <agent-state>
 }
 
 ```
@@ -85,17 +90,16 @@ information in the console at
 Manage > Access (IAM) > Access groups > Access policies.
 -->
 
-<!--
 You need the following permissions to run this module.
 
 - Account Management
-    - **Sample Account Service** service
-        - `Editor` platform access
-        - `Manager` service access
+    - **Resource group**
+        - `Viewer` access
     - IAM Services
-        - **Sample Cloud Service** service
-            - `Administrator` platform access
--->
+        - **Schematics** service
+            - `Writer` service access
+            - `Manager` service access
+
 
 <!-- NO PERMISSIONS FOR MODULE
 If no permissions are required for the module, uncomment the following
@@ -104,7 +108,6 @@ statement instead the previous block.
 
 <!-- No permissions are needed to run this module.-->
 
-
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
@@ -112,7 +115,8 @@ statement instead the previous block.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.49.0, < 2.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.70.0, < 2.0.0 |
+| <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1, < 4.0.0 |
 
 ### Modules
 
@@ -124,6 +128,7 @@ No modules.
 |------|------|
 | [ibm_schematics_agent.schematics_agent_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent) | resource |
 | [ibm_schematics_agent_deploy.schematics_agent_deploy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent_deploy) | resource |
+| [null_resource.agent_deployment_status](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 
 ### Inputs
 
@@ -131,15 +136,20 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_agent_description"></a> [agent\_description](#input\_agent\_description) | The schematics agent description. | `string` | `null` | no |
 | <a name="input_agent_location"></a> [agent\_location](#input\_agent\_location) | The location where the schematics agent is deployed in the user environment. | `string` | `"us-south"` | no |
+| <a name="input_agent_metadata_name"></a> [agent\_metadata\_name](#input\_agent\_metadata\_name) | (Optional) The metadata name of the agent. | `string` | `null` | no |
+| <a name="input_agent_metadata_value"></a> [agent\_metadata\_value](#input\_agent\_metadata\_value) | (Optional) The value of the metadata name of the agent. | `list(string)` | `null` | no |
 | <a name="input_agent_name"></a> [agent\_name](#input\_agent\_name) | The schematics agent name. | `string` | n/a | yes |
-| <a name="input_agent_resource_group_id"></a> [agent\_resource\_group\_id](#input\_agent\_resource\_group\_id) | The resource group ID of the schematics resource group. | `string` | n/a | yes |
-| <a name="input_agent_version"></a> [agent\_version](#input\_agent\_version) | The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases | `string` | `"1.3.1"` | no |
+| <a name="input_agent_resource_group_name"></a> [agent\_resource\_group\_name](#input\_agent\_resource\_group\_name) | The resource group name for the schematics agent. | `string` | n/a | yes |
+| <a name="input_agent_state"></a> [agent\_state](#input\_agent\_state) | User defined status of the agent. Allowed values are: `enable`, `disable`. | `string` | `"enable"` | no |
+| <a name="input_agent_tags"></a> [agent\_tags](#input\_agent\_tags) | Optional list of tags to be added to the agent. | `list(string)` | `null` | no |
+| <a name="input_agent_version"></a> [agent\_version](#input\_agent\_version) | The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases | `string` | `"1.5.0"` | no |
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | ID of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
-| <a name="input_cluster_resource_group_id"></a> [cluster\_resource\_group\_id](#input\_cluster\_resource\_group\_id) | Resource group ID of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
-| <a name="input_cos_bucket_name"></a> [cos\_bucket\_name](#input\_cos\_bucket\_name) | The COS bucket name to store the schematics agent logs. | `string` | n/a | yes |
-| <a name="input_cos_bucket_region"></a> [cos\_bucket\_region](#input\_cos\_bucket\_region) | The COS bucket region. | `string` | n/a | yes |
-| <a name="input_cos_instance_name"></a> [cos\_instance\_name](#input\_cos\_instance\_name) | The COS instance name where the bucket is created for the schematics agent logs. | `string` | n/a | yes |
+| <a name="input_cluster_resource_group_name"></a> [cluster\_resource\_group\_name](#input\_cluster\_resource\_group\_name) | The resource group name of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
+| <a name="input_cos_bucket_name"></a> [cos\_bucket\_name](#input\_cos\_bucket\_name) | The Object Storage bucket name to store the schematics agent logs. | `string` | n/a | yes |
+| <a name="input_cos_bucket_region"></a> [cos\_bucket\_region](#input\_cos\_bucket\_region) | The Object Storage bucket region. | `string` | n/a | yes |
+| <a name="input_cos_instance_name"></a> [cos\_instance\_name](#input\_cos\_instance\_name) | The Object Storage instance name where the bucket is created for the schematics agent logs. | `string` | n/a | yes |
 | <a name="input_infra_type"></a> [infra\_type](#input\_infra\_type) | Type of target agent infrastructure. Allowed values: `ibm_kubernetes`, `ibm_openshift` and `ibm_satellite`. | `string` | `"ibm_kubernetes"` | no |
+| <a name="input_run_destroy_resources"></a> [run\_destroy\_resources](#input\_run\_destroy\_resources) | Set this value greater than zero to destroy resources associated with agent deployment. | `number` | `0` | no |
 | <a name="input_schematics_location"></a> [schematics\_location](#input\_schematics\_location) | List of locations supported by IBM Cloud Schematics service. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`. | `string` | `"us-south"` | no |
 
 ### Outputs
