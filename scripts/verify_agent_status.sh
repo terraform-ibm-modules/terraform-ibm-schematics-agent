@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#############################################################################
+# This script is to check the deployment status of the Schematics Agent
+#############################################################################
+
 name=$(ibmcloud schematics agent get --id "$AGENT_ID" -o json | jq -r .name)
 status=$(ibmcloud schematics agent get --id "$AGENT_ID" -o json | jq -r .recent_deploy_job.status_code)
 echo "status = $status"
