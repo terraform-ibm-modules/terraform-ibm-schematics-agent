@@ -36,12 +36,21 @@ resource "ibm_is_vpc" "vpc" {
   tags           = var.resource_tags
 }
 
+resource "ibm_is_public_gateway" "pg" {
+  name           = "${var.prefix}-pg"
+  vpc            = ibm_is_vpc.vpc.id
+  zone           = "${var.region}-1"
+  resource_group = module.resource_group.resource_group_id
+  tags           = var.resource_tags
+}
+
 resource "ibm_is_subnet" "subnet" {
   name                     = "${var.prefix}-subnet"
   vpc                      = ibm_is_vpc.vpc.id
   zone                     = "${var.region}-1"
   total_ipv4_address_count = 256
   resource_group           = module.resource_group.resource_group_id
+  public_gateway           = ibm_is_public_gateway.pg.id
 }
 
 ##############################################################################
@@ -49,11 +58,12 @@ resource "ibm_is_subnet" "subnet" {
 ##############################################################################
 
 resource "ibm_container_vpc_cluster" "cluster" {
-  name              = "${var.prefix}-cluster"
-  vpc_id            = ibm_is_vpc.vpc.id
-  flavor            = "bx2.4x16"
-  resource_group_id = module.resource_group.resource_group_id
-  worker_count      = 3
+  name                                = "${var.prefix}-cluster"
+  vpc_id                              = ibm_is_vpc.vpc.id
+  flavor                              = "bx2.4x16"
+  disable_outbound_traffic_protection = true # To provide internet access to the pods for downloading terraform provider.
+  resource_group_id                   = module.resource_group.resource_group_id
+  worker_count                        = 3
   zones {
     subnet_id = ibm_is_subnet.subnet.id
     name      = "${var.region}-1"
