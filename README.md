@@ -24,7 +24,7 @@ More information about the IBM Schematics Agent can be found [here](https://clou
 ## Overview
 * [terraform-ibm-schematics-agent](#terraform-ibm-schematics-agent)
 * [Examples](./examples)
-    * [Kubernetes example](./examples/kubernetes)
+    * <div style="display: inline-block;"><a href="./examples/kubernetes">Kubernetes example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=sa-kubernetes-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-schematics-agent/tree/main/examples/kubernetes" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
