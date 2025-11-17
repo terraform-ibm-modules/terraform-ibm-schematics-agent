@@ -11,6 +11,12 @@
             "description:": "Check whether Cloud Object Storage is enabled with customer-managed encryption and Keep Your Own Key (KYOK)",
             "ignore_reason": "This module does not create any Cloud object storage and it is used in an example for testing purpose.",
             "is_valid": false
+        },
+        {
+            "scc_rule_id": "rule-2325054a-c338-474a-9740-0b7034487e40",
+            "description": "Check whether OpenShift clusters are accessible only by using private endpoints",
+            "ignore_reason": "This rule is not relevant to the module and it creates the cluster in the example for testing purpose.",
+            "is_valid": false
         }
     ]
 }
