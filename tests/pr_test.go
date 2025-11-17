@@ -11,7 +11,7 @@ import (
 
 // Use existing resource group
 const resourceGroup = "geretain-test-resources"
-const kubernetesExampleDir = "examples/kubernetes"
+const kubernetesExampleDir = "examples/complete"
 
 var validRegions = []string{
 	"us-south",
@@ -30,7 +30,7 @@ var validAgentLocation = []string{
 	"ca-tor",
 }
 
-func TestRunKubernetesExampleInSchematics(t *testing.T) {
+func TestRunCompleteExampleInSchematics(t *testing.T) {
 	t.Parallel()
 
 	region := validRegions[rand.Intn(len(validRegions))]
@@ -38,7 +38,7 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                t,
-		Prefix:                 "sa-k8s",
+		Prefix:                 "sa-ocp",
 		ResourceGroup:          resourceGroup,
 		TemplateFolder:         kubernetesExampleDir,
 		WaitJobCompleteMinutes: 360,
@@ -81,6 +81,8 @@ func TestRunUpgradeSchematics(t *testing.T) {
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
 		{Name: "agent_location", Value: agentLocation, DataType: "string"},
+		{Name: "kube_version", Value: "1.33.5", DataType: "string"},
+		{Name: "infra_type", Value: "ibm_kubernetes", DataType: "string"},
 	}
 
 	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")

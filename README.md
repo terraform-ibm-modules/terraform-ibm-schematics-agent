@@ -24,7 +24,7 @@ More information about the IBM Schematics Agent can be found [here](https://clou
 ## Overview
 * [terraform-ibm-schematics-agent](#terraform-ibm-schematics-agent)
 * [Examples](./examples)
-    * [Kubernetes example](./examples/kubernetes)
+    * [Complete example](./examples/complete)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 

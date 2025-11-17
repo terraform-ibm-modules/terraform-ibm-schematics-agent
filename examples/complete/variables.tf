@@ -28,6 +28,18 @@ variable "resource_tags" {
   default     = []
 }
 
+variable "kube_version" {
+  type        = string
+  description = "The Kubernetes version, including the major.minor version."
+  default     = "4.19.17_openshift"
+}
+
+variable "infra_type" {
+  type        = string
+  description = "Type of target agent infrastructure. Allowed values: `ibm_kubernetes`, `ibm_openshift` and `ibm_satellite`."
+  default     = "ibm_openshift"
+}
+
 variable "agent_location" {
   type        = string
   description = "The location where the schematics agent is deployed in the user environment."

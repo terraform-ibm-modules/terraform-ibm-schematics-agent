@@ -52,6 +52,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   name              = "${var.prefix}-cluster"
   vpc_id            = ibm_is_vpc.vpc.id
   flavor            = "bx2.4x16"
+  kube_version      = var.kube_version
   resource_group_id = module.resource_group.resource_group_id
   worker_count      = 3
   zones {
@@ -66,7 +67,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
 module "schematics_agent" {
   source                      = "../../"
-  infra_type                  = "ibm_kubernetes"
+  infra_type                  = var.infra_type
   cluster_id                  = ibm_container_vpc_cluster.cluster.id
   cluster_resource_group_name = module.resource_group.resource_group_name
   cos_instance_name           = module.cos.cos_instance_name
