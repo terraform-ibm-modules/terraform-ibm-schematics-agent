@@ -11,7 +11,7 @@ import (
 
 // Use existing resource group
 const resourceGroup = "geretain-test-resources"
-const kubernetesExampleDir = "examples/complete"
+const completeExampleDir = "examples/complete"
 
 var validRegions = []string{
 	"us-south",
@@ -40,10 +40,10 @@ func TestRunCompleteExampleInSchematics(t *testing.T) {
 		Testing:                t,
 		Prefix:                 "sa-ocp",
 		ResourceGroup:          resourceGroup,
-		TemplateFolder:         kubernetesExampleDir,
+		TemplateFolder:         completeExampleDir,
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
-			kubernetesExampleDir + "/*.tf",
+			completeExampleDir + "/*.tf",
 			"scripts/*.sh",
 		},
 	})
@@ -68,10 +68,10 @@ func TestRunUpgradeSchematics(t *testing.T) {
 		Testing:                t,
 		Prefix:                 "sa-k8s-upg",
 		ResourceGroup:          resourceGroup,
-		TemplateFolder:         kubernetesExampleDir,
+		TemplateFolder:         completeExampleDir,
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
-			kubernetesExampleDir + "/*.tf",
+			completeExampleDir + "/*.tf",
 			"scripts/*.sh",
 		},
 	})

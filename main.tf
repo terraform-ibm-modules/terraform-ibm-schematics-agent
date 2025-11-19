@@ -36,6 +36,7 @@ resource "null_resource" "agent_deployment_status" {
     command     = "${path.module}/scripts/verify_agent_status.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
+      REGION   = var.agent_location
       AGENT_ID = ibm_schematics_agent.schematics_agent_instance.id
     }
   }
