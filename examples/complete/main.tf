@@ -54,6 +54,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   flavor            = "bx2.4x16"
   kube_version      = var.kube_version
   resource_group_id = module.resource_group.resource_group_id
+  cos_instance_crn  = strcontains(var.kube_version, "openshift") ? module.cos.cos_instance_name : null
   worker_count      = 3
   zones {
     subnet_id = ibm_is_subnet.subnet.id
