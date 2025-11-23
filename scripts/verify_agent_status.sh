@@ -33,7 +33,6 @@ if [ "$IBMCLOUD_SCHEMATICS_API_ENDPOINT" = "schematics.cloud.ibm.com" ]; then
         result=$(curl -s -H "accept: application/json" -H "Authorization: Bearer $IAM_TOKEN" "$GET_AGENT_URL" 2>/dev/null)
         status_code=$(echo "$result" | jq -r .recent_deploy_job.status_code)
         name=$(echo "$result" | jq -r .name)
-        echo $result
     fi
 else
     GET_AGENT_URL="https://$REGION.$IBMCLOUD_SCHEMATICS_API_ENDPOINT/v2/agents/$AGENT_ID?profile=detailed"
