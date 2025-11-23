@@ -54,8 +54,8 @@ resource "ibm_container_vpc_cluster" "cluster" {
   flavor            = "bx2.4x16"
   kube_version      = var.kube_version
   resource_group_id = module.resource_group.resource_group_id
-  cos_instance_crn  = strcontains(var.kube_version, "openshift") ? module.cos.cos_instance_name : null
-  worker_count      = 3
+  cos_instance_crn  = module.cos.cos_instance_id
+  worker_count      = 2
   zones {
     subnet_id = ibm_is_subnet.subnet.id
     name      = "${var.region}-1"
@@ -68,7 +68,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
 module "schematics_agent" {
   source                      = "../../"
-  infra_type                  = var.infra_type
+  infra_type                  = "ibm_openshift"
   cluster_id                  = ibm_container_vpc_cluster.cluster.id
   cluster_resource_group_name = module.resource_group.resource_group_name
   cos_instance_name           = module.cos.cos_instance_name
@@ -80,9 +80,5 @@ module "schematics_agent" {
   agent_resource_group_name   = module.resource_group.resource_group_name
   schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
   agent_version               = var.agent_version
-  agent_tags                  = var.agent_tags
-  agent_metadata_name         = var.agent_metadata_name
-  agent_metadata_value        = var.agent_metadata_value
-  run_destroy_resources       = var.run_destroy_resources
-  agent_state                 = var.agent_state
+  agent_metadata              = var.agent_metadata
 }

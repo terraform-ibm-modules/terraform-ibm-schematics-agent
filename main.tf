@@ -7,10 +7,15 @@ resource "ibm_schematics_agent" "schematics_agent_instance" {
     cos_bucket_name        = var.cos_bucket_name
     cos_bucket_region      = var.cos_bucket_region
   }
-  agent_metadata {
-    name  = var.agent_metadata_name
-    value = var.agent_metadata_value
+
+  dynamic "agent_metadata" {
+    for_each = var.agent_metadata
+    content {
+      name  = var.agent_metadata["name"]
+      value = var.agent_metadata["value"]
+    }
   }
+
   agent_location        = var.agent_location
   description           = var.agent_description
   name                  = var.agent_name
@@ -18,9 +23,10 @@ resource "ibm_schematics_agent" "schematics_agent_instance" {
   schematics_location   = var.schematics_location
   version               = var.agent_version
   tags                  = var.agent_tags
-  run_destroy_resources = var.run_destroy_resources
+  run_destroy_resources = var.run_destroy_resources_job ? 1 : 0
+
   user_state {
-    state = var.agent_state
+    state = var.disable_agent ? "disable" : "enable"
   }
 }
 
@@ -28,16 +34,20 @@ resource "ibm_schematics_agent_deploy" "schematics_agent_deploy" {
   agent_id = ibm_schematics_agent.schematics_agent_instance.id
 }
 
-resource "null_resource" "agent_deployment_status" {
-
+data "ibm_iam_auth_token" "tokendata" {
   depends_on = [ibm_schematics_agent_deploy.schematics_agent_deploy]
+}
+
+resource "null_resource" "agent_deployment_status" {
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/verify_agent_status.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      REGION   = var.agent_location
-      AGENT_ID = ibm_schematics_agent.schematics_agent_instance.id
+      ACCESS_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token
+      REGION       = var.agent_location
+      AGENT_ID     = ibm_schematics_agent.schematics_agent_instance.id
+      PRIVATE_ENV  = var.use_schematics_private_endpoint ? true : false
     }
   }
 }

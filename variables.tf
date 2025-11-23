@@ -70,12 +70,18 @@ variable "agent_resource_group_name" {
 
 variable "schematics_location" {
   type        = string
-  description = "List of locations supported by IBM Cloud Schematics service. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`."
+  description = "The location to create the Schematics workspace. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`."
   default     = "us-south"
   validation {
     condition     = contains(["us-south", "us-east", "eu-gb", "eu-de"], var.schematics_location)
     error_message = "Allowed values for `schematics_location` are \"us-south\", \"us-east\", \"eu-gb\" or \"eu-de\"."
   }
+}
+
+variable "use_schematics_private_endpoint" {
+  type        = bool
+  description = "Set to `true` if you want to access Schematics via private endpoint."
+  default     = false
 }
 
 variable "agent_version" {
@@ -90,37 +96,29 @@ variable "agent_version" {
   }
 }
 
-variable "agent_metadata_name" {
-  type        = string
-  description = "(Optional) The metadata name of the agent."
-  default     = null
-}
-
-variable "agent_metadata_value" {
-  type        = list(string)
-  description = "(Optional) The value of the metadata name of the agent."
-  default     = null
+variable "agent_metadata" {
+  type = object({
+    name  = optional(string)
+    value = optional(list(string))
+  })
+  description = "The metadata of the agent."
+  default     = {}
 }
 
 variable "agent_tags" {
   type        = list(string)
-  description = "Optional list of tags to be added to the agent."
-  default     = null
+  description = "The list of tags to be added to the agent."
+  default     = []
 }
 
-variable "run_destroy_resources" {
-  type        = number
-  description = "Set this value greater than zero to destroy resources associated with agent deployment."
-  default     = 0
+variable "run_destroy_resources_job" {
+  type        = bool
+  description = "Set this value to `false` if you do not want to destroy resources associated with the agent deployment. Defaults to `true`."
+  default     = true
 }
 
-variable "agent_state" {
-  type        = string
-  description = "User defined status of the agent. Allowed values are: `enable`, `disable`."
-  default     = "enable"
-
-  validation {
-    condition     = contains(["enable", "disable"], var.agent_state)
-    error_message = "Allowed values for agent_state are: `enable` and `disable`."
-  }
+variable "disable_agent" {
+  type        = bool
+  description = "User defined status of the agent. Set to `true` to disable the agent. By default the agent state will be enabled."
+  default     = false
 }

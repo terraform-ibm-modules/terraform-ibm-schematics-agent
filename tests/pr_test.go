@@ -11,7 +11,8 @@ import (
 
 // Use existing resource group
 const resourceGroup = "geretain-test-resources"
-const completeExampleDir = "examples/complete"
+const kubernetesExampleDir = "examples/kubernetes"
+const openshiftExampleDir = "examples/openshift"
 
 var validRegions = []string{
 	"us-south",
@@ -30,7 +31,7 @@ var validAgentLocation = []string{
 	"ca-tor",
 }
 
-func TestRunCompleteExampleInSchematics(t *testing.T) {
+func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 	t.Parallel()
 
 	region := validRegions[rand.Intn(len(validRegions))]
@@ -40,10 +41,10 @@ func TestRunCompleteExampleInSchematics(t *testing.T) {
 		Testing:                t,
 		Prefix:                 "sa-ocp",
 		ResourceGroup:          resourceGroup,
-		TemplateFolder:         completeExampleDir,
+		TemplateFolder:         openshiftExampleDir,
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
-			completeExampleDir + "/*.tf",
+			openshiftExampleDir + "/*.tf",
 			"scripts/*.sh",
 		},
 	})
@@ -68,10 +69,10 @@ func TestRunUpgradeSchematics(t *testing.T) {
 		Testing:                t,
 		Prefix:                 "sa-k8s-upg",
 		ResourceGroup:          resourceGroup,
-		TemplateFolder:         completeExampleDir,
+		TemplateFolder:         kubernetesExampleDir,
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
-			completeExampleDir + "/*.tf",
+			kubernetesExampleDir + "/*.tf",
 			"scripts/*.sh",
 		},
 	})
@@ -81,8 +82,6 @@ func TestRunUpgradeSchematics(t *testing.T) {
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
 		{Name: "agent_location", Value: agentLocation, DataType: "string"},
-		{Name: "kube_version", Value: "1.33.5", DataType: "string"},
-		{Name: "infra_type", Value: "ibm_kubernetes", DataType: "string"},
 	}
 
 	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
