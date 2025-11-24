@@ -15,9 +15,9 @@ get_cloud_endpoint() {
 # Determine endpoints to use
 get_cloud_endpoint
 
+# Get IBM token to call API
 # shellcheck disable=SC2154
-IAM_TOKEN="$(echo "$ACCESS_TOKEN" | awk '{print $2}')"
-
+IAM_TOKEN="$(echo "$IAM_ACCESS_TOKEN" | awk '{print $2}')"
 
 # Verify Agent deployment status
 status_code=""
@@ -28,17 +28,20 @@ if [ "$IBMCLOUD_SCHEMATICS_API_ENDPOINT" = "schematics.cloud.ibm.com" ]; then
         result=$(curl -s -H "accept: application/json" -H "Authorization: Bearer $IAM_TOKEN" "$GET_AGENT_URL" 2>/dev/null)
         status_code=$(echo "$result" | jq -r .recent_deploy_job.status_code)
         name=$(echo "$result" | jq -r .name)
+        echo "$result"
     else
         GET_AGENT_URL="https://$REGION.$IBMCLOUD_SCHEMATICS_API_ENDPOINT/v2/agents/$AGENT_ID?profile=detailed"
         result=$(curl -s -H "accept: application/json" -H "Authorization: Bearer $IAM_TOKEN" "$GET_AGENT_URL" 2>/dev/null)
         status_code=$(echo "$result" | jq -r .recent_deploy_job.status_code)
         name=$(echo "$result" | jq -r .name)
+        echo "$result"
     fi
 else
     GET_AGENT_URL="https://$REGION.$IBMCLOUD_SCHEMATICS_API_ENDPOINT/v2/agents/$AGENT_ID?profile=detailed"
     result=$(curl -s -H "accept: application/json" -H "Authorization: Bearer $IAM_TOKEN" "$GET_AGENT_URL" 2>/dev/null)
     status_code=$(echo "$result" | jq -r .recent_deploy_job.status_code)
     name=$(echo "$result" | jq -r .name)
+    echo "$result"
 fi
 
 if [[ "$status_code" == "job_finished" ]]; then

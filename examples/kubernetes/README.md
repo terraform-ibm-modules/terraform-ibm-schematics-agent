@@ -1,6 +1,6 @@
 # Kubernetes example
 
-An end-to-end example that will provision the following:
+An end-to-end example that provisions the following:
 * A new resource group if one is not passed in.
 * An Object Storage instance and a bucket.
 * A new VPC with one subnet.

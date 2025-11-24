@@ -38,16 +38,20 @@ data "ibm_iam_auth_token" "tokendata" {
   depends_on = [ibm_schematics_agent_deploy.schematics_agent_deploy]
 }
 
+locals {
+  sensitive_tokendata = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
+}
+
 resource "null_resource" "agent_deployment_status" {
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/verify_agent_status.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      ACCESS_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token
-      REGION       = var.agent_location
-      AGENT_ID     = ibm_schematics_agent.schematics_agent_instance.id
-      PRIVATE_ENV  = var.use_schematics_private_endpoint ? true : false
+      IAM_ACCESS_TOKEN = local.sensitive_tokendata
+      REGION           = var.agent_location
+      AGENT_ID         = ibm_schematics_agent.schematics_agent_instance.id
+      PRIVATE_ENV      = var.use_schematics_private_endpoint ? true : false
     }
   }
 }

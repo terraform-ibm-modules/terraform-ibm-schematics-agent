@@ -27,7 +27,6 @@ var validAgentLocation = []string{
 	"eu-gb",
 	"us-east",
 	"ca-mon",
-	"eu-fr2",
 	"ca-tor",
 }
 
@@ -45,6 +44,34 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
 			openshiftExampleDir + "/*.tf",
+			"scripts/*.sh",
+		},
+	})
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "region", Value: region, DataType: "string"},
+		{Name: "agent_location", Value: agentLocation, DataType: "string"},
+	}
+
+	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
+}
+
+func TestRunKubernetesExampleInSchematics(t *testing.T) {
+	t.Parallel()
+
+	region := validRegions[rand.Intn(len(validRegions))]
+	agentLocation := validAgentLocation[rand.Intn(len(validAgentLocation))]
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing:                t,
+		Prefix:                 "sa-k8s",
+		ResourceGroup:          resourceGroup,
+		TemplateFolder:         kubernetesExampleDir,
+		WaitJobCompleteMinutes: 360,
+		TarIncludePatterns: []string{"*.tf",
+			kubernetesExampleDir + "/*.tf",
 			"scripts/*.sh",
 		},
 	})
