@@ -44,22 +44,50 @@ resource "ibm_is_subnet" "subnet" {
   resource_group           = module.resource_group.resource_group_id
 }
 
-##############################################################################
-# Create a Kubernetes cluster with 3 worker nodes
-##############################################################################
+resource "ibm_is_public_gateway" "gateway" {
+  name           = "${var.prefix}-gateway-1"
+  vpc            = ibm_is_vpc.vpc.id
+  resource_group = module.resource_group.resource_group_id
+  zone           = "${var.region}-1"
+}
 
-resource "ibm_container_vpc_cluster" "cluster" {
-  name              = "${var.prefix}-cluster"
-  vpc_id            = ibm_is_vpc.vpc.id
-  flavor            = "bx2.4x16"
-  kube_version      = var.kube_version
-  resource_group_id = module.resource_group.resource_group_id
-  cos_instance_crn  = module.cos.cos_instance_id
-  worker_count      = 2
-  zones {
-    subnet_id = ibm_is_subnet.subnet.id
-    name      = "${var.region}-1"
+##############################################################################
+# Create a OpenShift cluster with 2 worker nodes
+##############################################################################
+locals {
+  cluster_vpc_subnets = {
+    default = [
+      {
+        id         = ibm_is_subnet.subnet.id
+        cidr_block = ibm_is_subnet.subnet.ipv4_cidr_block
+        zone       = ibm_is_subnet.subnet.zone
+      }
+    ]
   }
+
+  worker_pools = [
+    {
+      subnet_prefix    = "default"
+      pool_name        = "default"
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2 # minimum of 2 is allowed when using single zone
+      operating_system = "RHCOS"
+    }
+  ]
+}
+
+module "ocp_base" {
+  source                              = "terraform-ibm-modules/base-ocp-vpc/ibm"
+  version                             = "3.73.2"
+  resource_group_id                   = module.resource_group.resource_group_id
+  region                              = var.region
+  tags                                = var.resource_tags
+  cluster_name                        = "${var.prefix}-cluster"
+  force_delete_storage                = true
+  vpc_id                              = ibm_is_vpc.vpc.id
+  vpc_subnets                         = local.cluster_vpc_subnets
+  worker_pools                        = local.worker_pools
+  disable_outbound_traffic_protection = true # set as True to enable outbound traffic; required for accessing Operator Hub in the OpenShift console.
 }
 
 ##############################################################################
@@ -69,7 +97,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 module "schematics_agent" {
   source                      = "../../"
   infra_type                  = "ibm_openshift"
-  cluster_id                  = ibm_container_vpc_cluster.cluster.id
+  cluster_id                  = module.ocp_base.cluster_id
   cluster_resource_group_name = module.resource_group.resource_group_name
   cos_instance_name           = module.cos.cos_instance_name
   cos_bucket_name             = module.cos.bucket_name
@@ -79,6 +107,4 @@ module "schematics_agent" {
   agent_name                  = "${var.prefix}-agent"
   agent_resource_group_name   = module.resource_group.resource_group_name
   schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
-  agent_version               = var.agent_version
-  agent_metadata              = var.agent_metadata
 }

@@ -94,12 +94,12 @@ func TestRunUpgradeSchematics(t *testing.T) {
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                t,
-		Prefix:                 "sa-k8s-upg",
+		Prefix:                 "sa-ocp-upg",
 		ResourceGroup:          resourceGroup,
-		TemplateFolder:         kubernetesExampleDir,
+		TemplateFolder:         openshiftExampleDir,
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
-			kubernetesExampleDir + "/*.tf",
+			openshiftExampleDir + "/*.tf",
 			"scripts/*.sh",
 		},
 	})

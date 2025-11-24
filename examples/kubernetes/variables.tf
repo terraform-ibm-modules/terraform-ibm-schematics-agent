@@ -6,8 +6,8 @@ variable "ibmcloud_api_key" {
 
 variable "region" {
   type        = string
-  description = "Region to provision all resources created by this example except schematics agent."
-  default     = "us-south"
+  description = "Region to provision all resources created by this example."
+  default     = "us-south" # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
 }
 
 variable "prefix" {
@@ -33,22 +33,4 @@ variable "agent_location" {
   description = "The location where the schematics agent is deployed in the user environment."
   default     = "us-south"
   nullable    = false
-}
-
-variable "agent_version" {
-  type        = string
-  description = "The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases."
-  default     = "1.5.0"
-}
-
-variable "agent_metadata" {
-  type = object({
-    name  = string
-    value = list(string)
-  })
-  description = "The metadata of the agent."
-  default = {
-    name  = "purpose"
-    value = ["git"]
-  }
 }

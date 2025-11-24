@@ -1,3 +1,20 @@
+############################################################################
+# Resource Group
+############################################################################
+
+# module "resource_group" {
+#   source  = "terraform-ibm-modules/resource-group/ibm"
+#   version = "1.4.0"
+#   # if an existing resource group is not set (null) create a new one using prefix
+#   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
+#   existing_resource_group_name = var.resource_group
+# }
+
+
+############################################################################
+# Create Schematics Agent
+############################################################################
+
 resource "ibm_schematics_agent" "schematics_agent_instance" {
   agent_infrastructure {
     infra_type             = var.infra_type
@@ -30,6 +47,10 @@ resource "ibm_schematics_agent" "schematics_agent_instance" {
   }
 }
 
+############################################################################
+# Deploy Schematics Agent
+############################################################################
+
 resource "ibm_schematics_agent_deploy" "schematics_agent_deploy" {
   agent_id = ibm_schematics_agent.schematics_agent_instance.id
 }
@@ -41,6 +62,10 @@ data "ibm_iam_auth_token" "tokendata" {
 locals {
   sensitive_tokendata = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
 }
+
+############################################################################
+# Verify status of Schematics Agent deployment
+############################################################################
 
 resource "null_resource" "agent_deployment_status" {
 

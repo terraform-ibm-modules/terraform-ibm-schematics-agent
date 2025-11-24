@@ -60,11 +60,22 @@ resource "ibm_container_vpc_cluster" "cluster" {
   }
 }
 
+data "ibm_container_cluster_config" "cluster_config" {
+  cluster_name_id   = ibm_container_vpc_cluster.cluster.id
+  resource_group_id = module.resource_group.resource_group_id
+}
+
+# Sleep to allow RBAC sync on cluster
+resource "time_sleep" "wait_operators" {
+  depends_on      = [data.ibm_container_cluster_config.cluster_config]
+  create_duration = "60s"
+}
 ##############################################################################
 # Create and deploy the Schematics agent
 ##############################################################################
 
 module "schematics_agent" {
+  depends_on                  = [time_sleep.wait_operators]
   source                      = "../../"
   infra_type                  = "ibm_kubernetes"
   cluster_id                  = ibm_container_vpc_cluster.cluster.id
@@ -77,6 +88,8 @@ module "schematics_agent" {
   agent_name                  = "${var.prefix}-agent"
   agent_resource_group_name   = module.resource_group.resource_group_name
   schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
-  agent_version               = var.agent_version
-  agent_metadata              = var.agent_metadata
+  agent_metadata = {
+    name  = "purpose"
+    value = ["git"]
+  }
 }

@@ -13,11 +13,10 @@ Update status and "latest release" badges:
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 <!-- Add a description of module(s) in this repo -->
-Creates an IBM Schematics Agent.
+Installs and deploy an IBM Schematics Agent on the cluster. To deploy an schematics agent, you should have admin access of the cluster.
 
-More information about the IBM Schematics Agent can be found [here](https://cloud.ibm.com/docs/schematics?topic=schematics-deploy-agent-overview&interface=ui)
+Refer [here](https://cloud.ibm.com/docs/schematics?topic=schematics-deploy-agent-overview&interface=ui) for more information about the IBM Schematics Agent.
 
-**Limitation:** The users who has admin role on cluster can install Schematics Agent.
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -57,10 +56,11 @@ provider "ibm" {
   ibmcloud_api_key = "XXXXXXXXXX"
   region           = "us-south"
 }
+
 module "schematics_agent" {
   source                      = "terraform-ibm-modules/schematics-agent/ibm"
   version                     = "latest" # Replace "latest" with a release version to lock into a specific release
-  infra_type                  = "ibm_kubernetes" # ibm_kubernetes, ibm_openshift, ibm_satellite.
+  infra_type                  = "ibm_openshift"
   cluster_id                  = "<cluster-id>"
   cluster_resource_group_name = "Default"
   cos_instance_name           = "<cos-instance-name>"
@@ -71,12 +71,8 @@ module "schematics_agent" {
   agent_name                  = "k8s-schematics-agent"
   agent_resource_group_name   = "Default"
   schematics_location         = "us-south" # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
-  agent_version               = "<agent-version>"
+  agent_version               = "1.5.0"
   agent_tags                  = []
-  agent_metadata_name         = <agent-metadata-name>
-  agent_metadata_value        = <agent-metadata-value>
-  run_destroy_resources       = <run-destroy-resources>
-  agent_state                 = <agent-state>
 }
 
 ```
@@ -99,6 +95,9 @@ You need the following permissions to run this module.
     - IAM Services
         - **Schematics** service
             - `Writer` service access
+            - `Manager` service access
+        - **Kubernetes** Service
+            - `Administrator` platform access
             - `Manager` service access
 
 

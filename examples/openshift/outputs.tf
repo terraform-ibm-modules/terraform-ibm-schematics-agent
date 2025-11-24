@@ -1,6 +1,6 @@
 output "cluster_id" {
   description = "OpenShift cluster ID."
-  value       = ibm_container_vpc_cluster.cluster.id
+  value       = module.ocp_base.cluster_id
 }
 
 output "schematics_agent_id" {
