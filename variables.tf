@@ -80,7 +80,7 @@ variable "schematics_location" {
 
 variable "use_schematics_private_endpoint" {
   type        = bool
-  description = "Set to `true` if you want to access Schematics via private endpoint."
+  description = "Set to `true` to use IBM Cloud Schematics private endpoints. Requires the runtime to have access to the IBM Cloud private network."
   default     = false
 }
 
