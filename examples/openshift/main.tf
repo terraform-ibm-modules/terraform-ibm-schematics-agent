@@ -51,6 +51,31 @@ resource "ibm_is_public_gateway" "gateway" {
   zone           = "${var.region}-1"
 }
 
+# resource "ibm_container_vpc_cluster" "cluster" {
+#   name              = "${var.prefix}-cluster"
+#   vpc_id            = ibm_is_vpc.vpc.id
+#   flavor            = "bx2.4x16"
+#   kube_version      = var.kube_version
+#   resource_group_id = module.resource_group.resource_group_id
+#   cos_instance_crn  = module.cos.cos_instance_id
+#   worker_count      = 2
+#   zones {
+#     subnet_id = ibm_is_subnet.subnet.id
+#     name      = "${var.region}-1"
+#   }
+# }
+
+# data "ibm_container_cluster_config" "cluster_config" {
+#   cluster_name_id   = ibm_container_vpc_cluster.cluster.id
+#   resource_group_id = module.resource_group.resource_group_id
+# }
+
+# # Sleep to allow RBAC sync on cluster
+# resource "time_sleep" "wait_operators" {
+#   depends_on      = [data.ibm_container_cluster_config.cluster_config]
+#   create_duration = "60s"
+# }
+
 ##############################################################################
 # Create a OpenShift cluster with 2 worker nodes
 ##############################################################################

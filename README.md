@@ -151,7 +151,7 @@ No modules.
 | <a name="input_infra_type"></a> [infra\_type](#input\_infra\_type) | Type of target agent infrastructure. Allowed values: `ibm_kubernetes`, `ibm_openshift` and `ibm_satellite`. | `string` | `"ibm_kubernetes"` | no |
 | <a name="input_run_destroy_resources_job"></a> [run\_destroy\_resources\_job](#input\_run\_destroy\_resources\_job) | Set this value to `false` if you do not want to destroy resources associated with the agent deployment. Defaults to `true`. | `bool` | `true` | no |
 | <a name="input_schematics_location"></a> [schematics\_location](#input\_schematics\_location) | The location to create the Schematics workspace. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`. | `string` | `"us-south"` | no |
-| <a name="input_use_schematics_private_endpoint"></a> [use\_schematics\_private\_endpoint](#input\_use\_schematics\_private\_endpoint) | Set to `true` if you want to access Schematics via private endpoint. | `bool` | `false` | no |
+| <a name="input_use_schematics_private_endpoint"></a> [use\_schematics\_private\_endpoint](#input\_use\_schematics\_private\_endpoint) | Set to `true` to use IBM Cloud Schematics private endpoints. Requires the runtime to have access to the IBM Cloud private network. | `bool` | `false` | no |
 
 ### Outputs
 

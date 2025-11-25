@@ -14,6 +14,7 @@ const resourceGroup = "geretain-test-resources"
 const kubernetesExampleDir = "examples/kubernetes"
 const openshiftExampleDir = "examples/openshift"
 
+// for schematics workspace
 var validRegions = []string{
 	"us-south",
 	"eu-de",
@@ -21,6 +22,7 @@ var validRegions = []string{
 	"us-east",
 }
 
+// for schematics agent
 var validAgentLocation = []string{
 	"us-south",
 	"eu-de",
