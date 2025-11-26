@@ -1,3 +1,9 @@
+variable "ibmcloud_api_key" {
+  type        = string
+  description = "The IBM Cloud api key to generate an IAM token."
+  sensitive   = true
+}
+
 variable "infra_type" {
   type        = string
   description = "Type of target agent infrastructure. Allowed values: `ibm_kubernetes`, `ibm_openshift` and `ibm_satellite`."
@@ -70,11 +76,11 @@ variable "agent_resource_group_name" {
 
 variable "schematics_location" {
   type        = string
-  description = "The location to create the Schematics workspace. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`."
+  description = "The location to create the Schematics workspace. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`, `ca-tor`, `ca-mon`, `eu-fr2`."
   default     = "us-south"
   validation {
-    condition     = contains(["us-south", "us-east", "eu-gb", "eu-de"], var.schematics_location)
-    error_message = "Allowed values for `schematics_location` are \"us-south\", \"us-east\", \"eu-gb\" or \"eu-de\"."
+    condition     = contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-tor", "ca-mon", "eu-fr2"], var.schematics_location)
+    error_message = "Allowed values for `schematics_location` are \"us-south\", \"us-east\", \"eu-gb\", \"ca-tor\", \"ca-mon\", \"eu-fr2\" or \"eu-de\"."
   }
 }
 
@@ -96,14 +102,14 @@ variable "agent_version" {
   }
 }
 
-variable "agent_metadata" {
-  type = object({
-    name  = optional(string)
-    value = optional(list(string))
-  })
-  description = "The metadata of the agent."
-  default     = {}
-}
+# variable "agent_metadata" {
+#   type = object({
+#     name  = optional(string)
+#     value = optional(list(string))
+#   })
+#   description = "The metadata of the agent."
+#   default     = {}
+# }
 
 variable "agent_tags" {
   type        = list(string)

@@ -51,31 +51,6 @@ resource "ibm_is_public_gateway" "gateway" {
   zone           = "${var.region}-1"
 }
 
-# resource "ibm_container_vpc_cluster" "cluster" {
-#   name              = "${var.prefix}-cluster"
-#   vpc_id            = ibm_is_vpc.vpc.id
-#   flavor            = "bx2.4x16"
-#   kube_version      = var.kube_version
-#   resource_group_id = module.resource_group.resource_group_id
-#   cos_instance_crn  = module.cos.cos_instance_id
-#   worker_count      = 2
-#   zones {
-#     subnet_id = ibm_is_subnet.subnet.id
-#     name      = "${var.region}-1"
-#   }
-# }
-
-# data "ibm_container_cluster_config" "cluster_config" {
-#   cluster_name_id   = ibm_container_vpc_cluster.cluster.id
-#   resource_group_id = module.resource_group.resource_group_id
-# }
-
-# # Sleep to allow RBAC sync on cluster
-# resource "time_sleep" "wait_operators" {
-#   depends_on      = [data.ibm_container_cluster_config.cluster_config]
-#   create_duration = "60s"
-# }
-
 ##############################################################################
 # Create a OpenShift cluster with 2 worker nodes
 ##############################################################################
@@ -120,16 +95,17 @@ module "ocp_base" {
 ##############################################################################
 
 module "schematics_agent" {
-  source                      = "../../"
+  source                      = "../.."
   infra_type                  = "ibm_openshift"
   cluster_id                  = module.ocp_base.cluster_id
   cluster_resource_group_name = module.resource_group.resource_group_name
   cos_instance_name           = module.cos.cos_instance_name
   cos_bucket_name             = module.cos.bucket_name
   cos_bucket_region           = module.cos.bucket_region
-  agent_location              = var.agent_location
+  agent_location              = var.region
   agent_description           = "${var.prefix}-agent-description"
   agent_name                  = "${var.prefix}-agent"
   agent_resource_group_name   = module.resource_group.resource_group_name
-  schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
+  schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`, `ca-tor`, `ca-mon`.
+  ibmcloud_api_key            = var.ibmcloud_api_key
 }

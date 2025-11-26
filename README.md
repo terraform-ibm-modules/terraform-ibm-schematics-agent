@@ -129,7 +129,6 @@ No modules.
 | [ibm_schematics_agent.schematics_agent_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent) | resource |
 | [ibm_schematics_agent_deploy.schematics_agent_deploy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent_deploy) | resource |
 | [null_resource.agent_deployment_status](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [ibm_iam_auth_token.tokendata](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/iam_auth_token) | data source |
 
 ### Inputs
 
@@ -137,7 +136,6 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_agent_description"></a> [agent\_description](#input\_agent\_description) | The schematics agent description. | `string` | `null` | no |
 | <a name="input_agent_location"></a> [agent\_location](#input\_agent\_location) | The location where the schematics agent is deployed in the user environment. | `string` | `"us-south"` | no |
-| <a name="input_agent_metadata"></a> [agent\_metadata](#input\_agent\_metadata) | The metadata of the agent. | <pre>object({<br/>    name  = optional(string)<br/>    value = optional(list(string))<br/>  })</pre> | `{}` | no |
 | <a name="input_agent_name"></a> [agent\_name](#input\_agent\_name) | The schematics agent name. | `string` | n/a | yes |
 | <a name="input_agent_resource_group_name"></a> [agent\_resource\_group\_name](#input\_agent\_resource\_group\_name) | The resource group name for the schematics agent. | `string` | n/a | yes |
 | <a name="input_agent_tags"></a> [agent\_tags](#input\_agent\_tags) | The list of tags to be added to the agent. | `list(string)` | `[]` | no |
@@ -148,9 +146,10 @@ No modules.
 | <a name="input_cos_bucket_region"></a> [cos\_bucket\_region](#input\_cos\_bucket\_region) | The Object Storage bucket region. | `string` | n/a | yes |
 | <a name="input_cos_instance_name"></a> [cos\_instance\_name](#input\_cos\_instance\_name) | The Object Storage instance name where the bucket is created for the schematics agent logs. | `string` | n/a | yes |
 | <a name="input_disable_agent"></a> [disable\_agent](#input\_disable\_agent) | User defined status of the agent. Set to `true` to disable the agent. By default the agent state will be enabled. | `bool` | `false` | no |
+| <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | The IBM Cloud api key to generate an IAM token. | `string` | n/a | yes |
 | <a name="input_infra_type"></a> [infra\_type](#input\_infra\_type) | Type of target agent infrastructure. Allowed values: `ibm_kubernetes`, `ibm_openshift` and `ibm_satellite`. | `string` | `"ibm_kubernetes"` | no |
 | <a name="input_run_destroy_resources_job"></a> [run\_destroy\_resources\_job](#input\_run\_destroy\_resources\_job) | Set this value to `false` if you do not want to destroy resources associated with the agent deployment. Defaults to `true`. | `bool` | `true` | no |
-| <a name="input_schematics_location"></a> [schematics\_location](#input\_schematics\_location) | The location to create the Schematics workspace. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`. | `string` | `"us-south"` | no |
+| <a name="input_schematics_location"></a> [schematics\_location](#input\_schematics\_location) | The location to create the Schematics workspace. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`, `ca-tor`, `ca-mon`, `eu-fr2`. | `string` | `"us-south"` | no |
 | <a name="input_use_schematics_private_endpoint"></a> [use\_schematics\_private\_endpoint](#input\_use\_schematics\_private\_endpoint) | Set to `true` to use IBM Cloud Schematics private endpoints. Requires the runtime to have access to the IBM Cloud private network. | `bool` | `false` | no |
 
 ### Outputs

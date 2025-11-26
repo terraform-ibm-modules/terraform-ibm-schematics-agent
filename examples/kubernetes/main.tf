@@ -76,20 +76,21 @@ resource "time_sleep" "wait_operators" {
 
 module "schematics_agent" {
   depends_on                  = [time_sleep.wait_operators]
-  source                      = "../../"
+  source                      = "../.."
   infra_type                  = "ibm_kubernetes"
   cluster_id                  = ibm_container_vpc_cluster.cluster.id
   cluster_resource_group_name = module.resource_group.resource_group_name
   cos_instance_name           = module.cos.cos_instance_name
   cos_bucket_name             = module.cos.bucket_name
   cos_bucket_region           = module.cos.bucket_region
-  agent_location              = var.agent_location
+  agent_location              = var.region
   agent_description           = "${var.prefix}-agent-description"
   agent_name                  = "${var.prefix}-agent"
   agent_resource_group_name   = module.resource_group.resource_group_name
-  schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`.
-  agent_metadata = {
-    name  = "purpose"
-    value = ["git"]
-  }
+  schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`, `ca-tor`, `ca-mon`.
+  # agent_metadata = {
+  #   name  = "purpose"
+  #   value = ["git"]
+  # }
+  ibmcloud_api_key = var.ibmcloud_api_key
 }

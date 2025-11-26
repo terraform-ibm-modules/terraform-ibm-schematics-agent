@@ -16,8 +16,23 @@ get_cloud_endpoint() {
 get_cloud_endpoint
 
 # Get IBM token to call API
-# shellcheck disable=SC2154
-IAM_TOKEN="$(echo "$IAM_ACCESS_TOKEN" | awk '{print $2}')"
+# This is a workaround function added to retrieve a new token, this can be removed once this issue(https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6107) is fixed.
+fetch_token() {
+    if [ "$IBMCLOUD_IAM_API_ENDPOINT" = "iam.cloud.ibm.com" ]; then
+        if [ "$PRIVATE_ENV" = true ]; then
+            IAM_URL="https://private.$IBMCLOUD_IAM_API_ENDPOINT/identity/token"
+        else
+            IAM_URL="https://$IBMCLOUD_IAM_API_ENDPOINT/identity/token"
+        fi
+    else
+        IAM_URL="https://$IBMCLOUD_IAM_API_ENDPOINT/identity/token"
+    fi
+
+    token=$(curl -s -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IAM_API_KEY" -X POST "$IAM_URL") #pragma: allowlist secret
+    IAM_TOKEN=$(echo "$token" | jq -r .access_token)
+}
+
+fetch_token
 
 # Verify Agent deployment status
 status_code=""

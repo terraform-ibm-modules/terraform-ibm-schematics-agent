@@ -27,10 +27,3 @@ variable "resource_tags" {
   description = "The list of tags to be added to created resources."
   default     = []
 }
-
-variable "agent_location" {
-  type        = string
-  description = "The location where the schematics agent is deployed in the user environment."
-  default     = "us-south"
-  nullable    = false
-}

@@ -14,29 +14,19 @@ const resourceGroup = "geretain-test-resources"
 const kubernetesExampleDir = "examples/kubernetes"
 const openshiftExampleDir = "examples/openshift"
 
-// for schematics workspace
 var validRegions = []string{
 	"us-south",
 	"eu-de",
 	"eu-gb",
 	"us-east",
-}
-
-// for schematics agent
-var validAgentLocation = []string{
-	"us-south",
-	"eu-de",
-	"eu-gb",
-	"us-east",
-	"ca-mon",
 	"ca-tor",
+	"ca-mon",
 }
 
 func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 	t.Parallel()
 
 	region := validRegions[rand.Intn(len(validRegions))]
-	agentLocation := validAgentLocation[rand.Intn(len(validAgentLocation))]
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                t,
@@ -54,7 +44,6 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
-		{Name: "agent_location", Value: agentLocation, DataType: "string"},
 	}
 
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
@@ -64,7 +53,6 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 	t.Parallel()
 
 	region := validRegions[rand.Intn(len(validRegions))]
-	agentLocation := validAgentLocation[rand.Intn(len(validAgentLocation))]
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                t,
@@ -82,7 +70,6 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
-		{Name: "agent_location", Value: agentLocation, DataType: "string"},
 	}
 
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
@@ -92,7 +79,6 @@ func TestRunUpgradeSchematics(t *testing.T) {
 	t.Parallel()
 
 	region := validRegions[rand.Intn(len(validRegions))]
-	agentLocation := validAgentLocation[rand.Intn(len(validAgentLocation))]
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                t,
@@ -110,7 +96,6 @@ func TestRunUpgradeSchematics(t *testing.T) {
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
-		{Name: "agent_location", Value: agentLocation, DataType: "string"},
 	}
 
 	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
