@@ -6,6 +6,9 @@
 
 set -u
 
+MAX_ATTEMPTS=15
+ATTEMPT=0
+
 get_cloud_endpoint() {
     iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
     IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
@@ -37,38 +40,50 @@ fetch_token() {
 
 fetch_token
 
+result=$(cat renovate.json)
+
 # Verify Agent deployment status
 status_code=""
 
-if [ "$IBMCLOUD_SCHEMATICS_API_ENDPOINT" = "schematics.cloud.ibm.com" ]; then
-    if [ "$PRIVATE_ENV" = true ]; then
-        GET_AGENT_URL="https://private-$REGION.$IBMCLOUD_SCHEMATICS_API_ENDPOINT/v2/agents/$AGENT_ID?profile=detailed"
-        result=$(curl -s -H "accept: application/json" -H "Authorization: Bearer $IAM_TOKEN" "$GET_AGENT_URL" 2>/dev/null)
-        status_code=$(echo "$result" | jq -r .recent_deploy_job.status_code)
-        name=$(echo "$result" | jq -r .name)
-        echo "$result"
+echo "Checking status of the Schematics Agents..."
+
+while ((ATTEMPT < MAX_ATTEMPTS)); do
+    ATTEMPT=$((ATTEMPT + 1))
+
+    if [ "$IBMCLOUD_SCHEMATICS_API_ENDPOINT" = "schematics.cloud.ibm.com" ]; then
+        if [ "$PRIVATE_ENV" = true ]; then
+            GET_AGENT_URL="https://private-$REGION.$IBMCLOUD_SCHEMATICS_API_ENDPOINT/v2/agents/$AGENT_ID?profile=detailed"
+            result=$(curl -s -H "accept: application/json" -H "Authorization: Bearer $IAM_TOKEN" "$GET_AGENT_URL" 2>/dev/null)
+            status_code=$(echo "$result" | jq -r .recent_deploy_job.status_code)
+            name=$(echo "$result" | jq -r .name)
+        else
+            GET_AGENT_URL="https://$REGION.$IBMCLOUD_SCHEMATICS_API_ENDPOINT/v2/agents/$AGENT_ID?profile=detailed"
+            result=$(curl -s -H "accept: application/json" -H "Authorization: Bearer $IAM_TOKEN" "$GET_AGENT_URL" 2>/dev/null)
+            status_code=$(echo "$result" | jq -r .recent_deploy_job.status_code)
+            name=$(echo "$result" | jq -r .name)
+        fi
     else
         GET_AGENT_URL="https://$REGION.$IBMCLOUD_SCHEMATICS_API_ENDPOINT/v2/agents/$AGENT_ID?profile=detailed"
         result=$(curl -s -H "accept: application/json" -H "Authorization: Bearer $IAM_TOKEN" "$GET_AGENT_URL" 2>/dev/null)
         status_code=$(echo "$result" | jq -r .recent_deploy_job.status_code)
         name=$(echo "$result" | jq -r .name)
-        echo "$result"
     fi
-else
-    GET_AGENT_URL="https://$REGION.$IBMCLOUD_SCHEMATICS_API_ENDPOINT/v2/agents/$AGENT_ID?profile=detailed"
-    result=$(curl -s -H "accept: application/json" -H "Authorization: Bearer $IAM_TOKEN" "$GET_AGENT_URL" 2>/dev/null)
-    status_code=$(echo "$result" | jq -r .recent_deploy_job.status_code)
-    name=$(echo "$result" | jq -r .name)
-    echo "$result"
-fi
 
-if [[ "$status_code" == "job_finished" ]]; then
-    echo "Agent $name deployed successfully."
-    exit 0
-elif [[ "$status_code" == "job_failed" ]]; then
-    echo "ERROR: Agent $name deployment failed. Please go to the Schematics Agents dashboard(https://cloud.ibm.com/automation/schematics/extensions/agents) to check the logs."
-    exit 1
-else
-    echo "ERROR: Unknown status. Please go to the Schematics Agents dashboard(https://cloud.ibm.com/automation/schematics/extensions/agents) to check the logs."
+    if [[ "$status_code" == "job_finished" ]]; then
+        echo "Agent $name deployed successfully."
+        echo "$result"
+        exit 0
+    elif [[ "$status_code" == "job_failed" ]]; then
+        echo "ERROR: Agent $name deployment failed. Please go to the Schematics Agents dashboard(https://cloud.ibm.com/automation/schematics/extensions/agents) to check the logs."
+        exit 1
+    else
+        sleep 30
+        echo "Unknown status. Retrying in 30 secs..!!"
+    fi
+done
+
+# Final check
+if ((ATTEMPT >= MAX_ATTEMPTS)); then
+    echo "ERROR: Reached maximum attempts. Please go to the Schematics Agents dashboard(https://cloud.ibm.com/automation/schematics/extensions/agents) to check the logs." >&2
     exit 1
 fi
