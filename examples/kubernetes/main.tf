@@ -58,6 +58,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
     subnet_id = ibm_is_subnet.subnet.id
     name      = "${var.region}-1"
   }
+  disable_outbound_traffic_protection = true
 }
 
 data "ibm_container_cluster_config" "cluster_config" {
