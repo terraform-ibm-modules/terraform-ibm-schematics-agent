@@ -88,7 +88,7 @@ module "ocp_base" {
   vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = local.worker_pools
-  # Allows outbound internet access for pods to download required Terraform providers in the private cluster. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-infrastructure-overview#agents-infra-workspace)
+  # Allows outbound internet access for your workspace runs to be able to pull terraform providers from the internet. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-infrastructure-overview#agents-infra-workspace)
   # If you want to deploy a fully private cluster, you must configure private registries so Terraform providers can be downloaded. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-registry-overview&interface=terraform)
   disable_outbound_traffic_protection = true
 }

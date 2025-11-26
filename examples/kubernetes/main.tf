@@ -67,7 +67,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
     name      = "${var.region}-1"
   }
   wait_till = "IngressReady"
-  # Allows outbound internet access for pods to download required Terraform providers in the private cluster. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-infrastructure-overview#agents-infra-workspace)
+  # Allows outbound internet access for your workspace runs to be able to pull terraform providers from the internet. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-infrastructure-overview#agents-infra-workspace)
   # If you want to deploy a fully private cluster, you must configure private registries so Terraform providers can be downloaded. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-registry-overview&interface=terraform)
   disable_outbound_traffic_protection = true
 }
