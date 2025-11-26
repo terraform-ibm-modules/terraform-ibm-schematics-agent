@@ -58,6 +58,8 @@ resource "ibm_container_vpc_cluster" "cluster" {
     subnet_id = ibm_is_subnet.subnet.id
     name      = "${var.region}-1"
   }
+  # Allows outbound internet access for pods to download required Terraform providers in the private cluster. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-infrastructure-overview#agents-infra-workspace)
+  # If you want to deploy a fully private cluster, you must configure private registries so Terraform providers can be downloaded. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-registry-overview&interface=terraform)
   disable_outbound_traffic_protection = true
 }
 
@@ -88,9 +90,5 @@ module "schematics_agent" {
   agent_description           = "${var.prefix}-agent-description"
   agent_name                  = "${var.prefix}-agent"
   agent_resource_group_name   = module.resource_group.resource_group_name
-  schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`, `ca-tor`, `ca-mon`.
-  # agent_metadata = {
-  #   name  = "purpose"
-  #   value = ["git"]
-  # }
+  schematics_location         = var.region
 }

@@ -6,7 +6,7 @@ variable "ibmcloud_api_key" {
 
 variable "region" {
   type        = string
-  description = "Region to provision all resources created by this example except schematics agent."
+  description = "Region to provision all resources created by this example."
   default     = "us-south"
 }
 

@@ -96,6 +96,7 @@ variable "agent_version" {
   }
 }
 
+# See, https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6569
 # variable "agent_metadata" {
 #   type = object({
 #     name  = optional(string)

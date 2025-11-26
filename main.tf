@@ -45,6 +45,7 @@ resource "ibm_schematics_agent_deploy" "schematics_agent_deploy" {
 }
 
 data "ibm_iam_auth_token" "tokendata" {
+  # Prevents the token from being generated too early and expiring before execution.
   depends_on = [ibm_schematics_agent_deploy.schematics_agent_deploy]
 }
 

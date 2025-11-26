@@ -13,9 +13,6 @@ MAX_ATTEMPTS=15
 ATTEMPT=0
 
 get_cloud_endpoint() {
-    iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
-    IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
-
     schematics_api_endpoint="${IBMCLOUD_SCHEMATICS_API_ENDPOINT:-"schematics.cloud.ibm.com"}"
     schematics_api_endpoint=${schematics_api_endpoint#https://}
     IBMCLOUD_SCHEMATICS_API_ENDPOINT=${schematics_api_endpoint%}
