@@ -107,5 +107,4 @@ module "schematics_agent" {
   agent_name                  = "${var.prefix}-agent"
   agent_resource_group_name   = module.resource_group.resource_group_name
   schematics_location         = var.region # Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`, `ca-tor`, `ca-mon`.
-  ibmcloud_api_key            = var.ibmcloud_api_key
 }

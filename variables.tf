@@ -1,9 +1,3 @@
-variable "ibmcloud_api_key" {
-  type        = string
-  description = "The IBM Cloud api key to generate an IAM token."
-  sensitive   = true
-}
-
 variable "infra_type" {
   type        = string
   description = "Type of target agent infrastructure. Allowed values: `ibm_kubernetes`, `ibm_openshift` and `ibm_satellite`."

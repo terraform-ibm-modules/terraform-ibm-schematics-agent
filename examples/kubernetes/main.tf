@@ -92,5 +92,4 @@ module "schematics_agent" {
   #   name  = "purpose"
   #   value = ["git"]
   # }
-  ibmcloud_api_key = var.ibmcloud_api_key
 }
