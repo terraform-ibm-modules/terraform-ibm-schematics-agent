@@ -63,9 +63,9 @@ resource "null_resource" "agent_deployment_status" {
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_ACCESS_TOKEN = local.sensitive_tokendata
-      REGION      = var.agent_location
-      AGENT_ID    = ibm_schematics_agent.schematics_agent_instance.id
-      PRIVATE_ENV = var.use_schematics_private_endpoint ? true : false
+      REGION           = var.agent_location
+      AGENT_ID         = ibm_schematics_agent.schematics_agent_instance.id
+      PRIVATE_ENV      = var.use_schematics_private_endpoint ? true : false
     }
   }
 }
