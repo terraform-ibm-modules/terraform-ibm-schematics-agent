@@ -40,8 +40,6 @@ fetch_token() {
 
 fetch_token
 
-result=$(cat renovate.json)
-
 # Verify Agent deployment status
 status_code=""
 
