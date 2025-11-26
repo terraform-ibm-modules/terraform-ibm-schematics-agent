@@ -44,6 +44,13 @@ resource "ibm_is_subnet" "subnet" {
   resource_group           = module.resource_group.resource_group_id
 }
 
+resource "ibm_is_public_gateway" "gateway" {
+  name           = "${var.prefix}-gateway-1"
+  vpc            = ibm_is_vpc.vpc.id
+  resource_group = module.resource_group.resource_group_id
+  zone           = "${var.region}-1"
+}
+
 ##############################################################################
 # Create a Kubernetes cluster with 3 worker nodes
 ##############################################################################
