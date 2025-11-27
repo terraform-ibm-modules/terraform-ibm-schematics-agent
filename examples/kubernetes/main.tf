@@ -59,9 +59,9 @@ resource "ibm_is_public_gateway" "gateway" {
 resource "ibm_container_vpc_cluster" "cluster" {
   name              = "${var.prefix}-cluster"
   vpc_id            = ibm_is_vpc.vpc.id
-  flavor            = "bx2.2x8"
+  flavor            = "bx2.4x16"
   resource_group_id = module.resource_group.resource_group_id
-  worker_count      = 1
+  worker_count      = 2
   zones {
     subnet_id = ibm_is_subnet.subnet.id
     name      = "${var.region}-1"

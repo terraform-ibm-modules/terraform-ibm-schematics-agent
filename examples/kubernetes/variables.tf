@@ -7,13 +7,13 @@ variable "ibmcloud_api_key" {
 variable "region" {
   type        = string
   description = "Region to provision all resources created by this example."
-  default     = "us-south"
+  default     = "us-east"
 }
 
 variable "prefix" {
   type        = string
   description = "Prefix to append to all resources created by this example."
-  default     = "sa-k8s"
+  default     = "sa54-k8s"
 }
 
 variable "resource_group" {
