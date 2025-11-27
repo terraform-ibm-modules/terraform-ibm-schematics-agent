@@ -53,44 +53,54 @@ resource "ibm_is_public_gateway" "gateway" {
 }
 
 ##############################################################################
-# Create a Kubernetes cluster with 3 worker nodes
+# Create a OpenShift cluster with 2 worker nodes
 ##############################################################################
-
-resource "ibm_container_vpc_cluster" "cluster" {
-  name              = "${var.prefix}-cluster"
-  vpc_id            = ibm_is_vpc.vpc.id
-  flavor            = "bx2.4x16"
-  resource_group_id = module.resource_group.resource_group_id
-  worker_count      = 2
-  zones {
-    subnet_id = ibm_is_subnet.subnet.id
-    name      = "${var.region}-1"
+locals {
+  cluster_vpc_subnets = {
+    default = [
+      {
+        id         = ibm_is_subnet.subnet.id
+        cidr_block = ibm_is_subnet.subnet.ipv4_cidr_block
+        zone       = ibm_is_subnet.subnet.zone
+      }
+    ]
   }
-  wait_till = "IngressReady"
+
+  worker_pools = [
+    {
+      subnet_prefix    = "default"
+      pool_name        = "default"
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2 # minimum of 2 is allowed when using single zone
+      operating_system = "RHCOS"
+    }
+  ]
+}
+
+module "ocp_base" {
+  source               = "terraform-ibm-modules/base-ocp-vpc/ibm"
+  version              = "3.73.2"
+  resource_group_id    = module.resource_group.resource_group_id
+  region               = var.region
+  tags                 = var.resource_tags
+  cluster_name         = "${var.prefix}-cluster"
+  force_delete_storage = true
+  vpc_id               = ibm_is_vpc.vpc.id
+  vpc_subnets          = local.cluster_vpc_subnets
+  worker_pools         = local.worker_pools
   # Allows outbound internet access for your workspace runs to be able to pull terraform providers from the internet. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-infrastructure-overview#agents-infra-workspace)
   # If you want to deploy a fully private cluster, you must configure private registries so Terraform providers can be downloaded. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-registry-overview&interface=terraform)
   disable_outbound_traffic_protection = true
 }
 
-data "ibm_container_cluster_config" "cluster_config" {
-  cluster_name_id   = ibm_container_vpc_cluster.cluster.id
-  resource_group_id = module.resource_group.resource_group_id
-}
-
-# Sleep to allow RBAC sync on cluster
-resource "time_sleep" "wait_operators" {
-  depends_on      = [data.ibm_container_cluster_config.cluster_config]
-  create_duration = "60s"
-}
 ##############################################################################
 # Create and deploy the Schematics agent
 ##############################################################################
 
 module "schematics_agent" {
-  depends_on                  = [time_sleep.wait_operators]
   source                      = "../.."
-  infra_type                  = "ibm_kubernetes"
-  cluster_id                  = ibm_container_vpc_cluster.cluster.id
+  infra_type                  = "ibm_openshift"
+  cluster_id                  = module.ocp_base.cluster_id
   cluster_resource_group_name = module.resource_group.resource_group_name
   cos_instance_name           = module.cos.cos_instance_name
   cos_bucket_name             = module.cos.bucket_name

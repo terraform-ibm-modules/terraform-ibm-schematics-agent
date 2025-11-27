@@ -2,62 +2,101 @@
 package test
 
 import (
+	"math/rand"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
+	"github.com/stretchr/testify/require"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
 
 // Use existing resource group
 const resourceGroup = "geretain-test-resources"
 const kubernetesExampleDir = "examples/kubernetes"
-const region = "us-south"
+const openshiftExampleDir = "examples/openshift"
 
-// temporarily ignore destroy for schematics_agent_deploy as its currently in beta.
-var ignoreDestroys = []string{
-	"module.schematics_agent.ibm_schematics_agent.schematics_agent_instance",
-	"module.schematics_agent.ibm_schematics_agent_deploy.schematics_agent_deploy",
+var validRegions = []string{
+	"us-south",
+	"eu-de",
+	"eu-gb",
+	"us-east",
+	"ca-tor",
+	"ca-mon",
 }
 
-func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptions {
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  dir,
-		Prefix:        prefix,
-		ResourceGroup: resourceGroup,
-		Region:        region,
-		IgnoreDestroys: testhelper.Exemptions{
-			List: ignoreDestroys,
+func TestRunOpenShiftExampleInSchematics(t *testing.T) {
+	t.Parallel()
+
+	region := validRegions[rand.Intn(len(validRegions))]
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing:                t,
+		Prefix:                 "sa-ocp",
+		ResourceGroup:          resourceGroup,
+		TemplateFolder:         openshiftExampleDir,
+		WaitJobCompleteMinutes: 360,
+		TarIncludePatterns: []string{"*.tf",
+			openshiftExampleDir + "/*.tf",
+			"scripts/*.sh",
 		},
 	})
-	return options
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "region", Value: region, DataType: "string"},
+	}
+
+	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
 }
 
-func TestRunKubernetesExample(t *testing.T) {
+func TestRunKubernetesExampleInSchematics(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "sa-k8s", kubernetesExampleDir)
+	region := validRegions[rand.Intn(len(validRegions))]
 
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing:                t,
+		Prefix:                 "sa-k8s",
+		ResourceGroup:          resourceGroup,
+		TemplateFolder:         kubernetesExampleDir,
+		WaitJobCompleteMinutes: 360,
+		TarIncludePatterns: []string{"*.tf",
+			kubernetesExampleDir + "/*.tf",
+			"scripts/*.sh",
+		},
+	})
 
-	outputs := options.LastTestTerraformOutputs
-	expectedOutputs := []string{"schematics_agent_status_code"}
-	_, outputErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
-	if assert.NoErrorf(t, outputErr, "Some outputs not found or nil.") {
-		assert.Equal(t, outputs["schematics_agent_status_code"].(string), "job_finished")
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "region", Value: region, DataType: "string"},
 	}
+
+	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
 }
 
-func TestRunUpgradeExample(t *testing.T) {
+func TestRunUpgradeSchematics(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "sa-k8s-upg", kubernetesExampleDir)
+	region := validRegions[rand.Intn(len(validRegions))]
 
-	output, err := options.RunTestUpgrade()
-	if !options.UpgradeTestSkipped {
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing:                t,
+		Prefix:                 "sa-ocp-upg",
+		ResourceGroup:          resourceGroup,
+		TemplateFolder:         openshiftExampleDir,
+		WaitJobCompleteMinutes: 360,
+		TarIncludePatterns: []string{"*.tf",
+			openshiftExampleDir + "/*.tf",
+			"scripts/*.sh",
+		},
+	})
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "region", Value: region, DataType: "string"},
 	}
+
+	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
 }

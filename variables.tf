@@ -14,27 +14,27 @@ variable "cluster_id" {
   nullable    = false
 }
 
-variable "cluster_resource_group_id" {
+variable "cluster_resource_group_name" {
   type        = string
-  description = "Resource group ID of the target cluster where the schematics agent will be installed."
+  description = "The resource group name of the target cluster where the schematics agent will be installed."
   nullable    = false
 }
 
 variable "cos_instance_name" {
   type        = string
-  description = "The COS instance name where the bucket is created for the schematics agent logs."
+  description = "The Object Storage instance name where the bucket is created for the schematics agent logs."
   nullable    = false
 }
 
 variable "cos_bucket_name" {
   type        = string
-  description = "The COS bucket name to store the schematics agent logs."
+  description = "The Object Storage bucket name to store the schematics agent logs."
   nullable    = false
 }
 
 variable "cos_bucket_region" {
   type        = string
-  description = "The COS bucket region."
+  description = "The Object Storage bucket region."
   nullable    = false
 }
 
@@ -43,6 +43,11 @@ variable "agent_location" {
   description = "The location where the schematics agent is deployed in the user environment."
   default     = "us-south"
   nullable    = false
+
+  validation {
+    condition     = contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-mon", "eu-fr2", "ca-tor"], var.agent_location)
+    error_message = "Allowed values for `agent_location` are \"us-south\", \"us-east\", \"eu-gb\", \"eu-de\", \"ca-mon\", \"eu-fr2\" or \"ca-tor\"."
+  }
 }
 
 variable "agent_description" {
@@ -57,25 +62,64 @@ variable "agent_name" {
   nullable    = false
 }
 
-variable "agent_resource_group_id" {
+variable "agent_resource_group_name" {
   type        = string
-  description = "The resource group ID of the schematics resource group."
+  description = "The resource group name for the schematics agent."
   nullable    = false
 }
 
 variable "schematics_location" {
   type        = string
-  description = "List of locations supported by IBM Cloud Schematics service. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`."
+  description = "The location to create the Schematics workspace. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`, `ca-tor`, `ca-mon`, `eu-fr2`."
   default     = "us-south"
   validation {
-    condition     = contains(["us-south", "us-east", "eu-gb", "eu-de"], var.schematics_location)
-    error_message = "Allowed values for `schematics_location` are \"us-south\", \"us-east\", \"eu-gb\" or \"eu-de\"."
+    condition     = contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-tor", "ca-mon", "eu-fr2"], var.schematics_location)
+    error_message = "Allowed values for `schematics_location` are \"us-south\", \"us-east\", \"eu-gb\", \"ca-tor\", \"ca-mon\", \"eu-fr2\" or \"eu-de\"."
   }
+}
+
+variable "use_schematics_private_endpoint" {
+  type        = bool
+  description = "Set to `true` to use IBM Cloud Schematics private endpoints. Requires the runtime to have access to the IBM Cloud private network."
+  default     = false
 }
 
 variable "agent_version" {
   type        = string
   description = "The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases"
   nullable    = false
-  default     = "1.3.1"
+  default     = "1.5.0"
+
+  validation {
+    condition     = contains(["1.5.0", "1.4.0", "1.3.1", "1.3.0", "1.2.0", "1.1.1", "1.1.0", "1.0.0", ], var.agent_version)
+    error_message = "Agent version provided is not supported."
+  }
+}
+
+# See, https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6569
+# variable "agent_metadata" {
+#   type = object({
+#     name  = optional(string)
+#     value = optional(list(string))
+#   })
+#   description = "The metadata of the agent."
+#   default     = {}
+# }
+
+variable "agent_tags" {
+  type        = list(string)
+  description = "The list of tags to be added to the agent."
+  default     = []
+}
+
+variable "run_destroy_resources_job" {
+  type        = bool
+  description = "Set this value to `false` if you do not want to destroy resources associated with the agent deployment. Defaults to `true`."
+  default     = true
+}
+
+variable "disable_agent" {
+  type        = bool
+  description = "User defined status of the agent. Set to `true` to disable the agent. By default the agent state will be enabled."
+  default     = false
 }
