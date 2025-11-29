@@ -23,8 +23,8 @@ Refer [here](https://cloud.ibm.com/docs/schematics?topic=schematics-deploy-agent
 ## Overview
 * [terraform-ibm-schematics-agent](#terraform-ibm-schematics-agent)
 * [Examples](./examples)
-    * [Kubernetes example](./examples/kubernetes)
-    * [OpenShift example](./examples/openshift)
+    * <div style="display: inline-block;"><a href="./examples/kubernetes">Kubernetes example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=sa-kubernetes-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-schematics-agent/tree/main/examples/kubernetes" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/openshift">OpenShift example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=sa-openshift-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-schematics-agent/tree/main/examples/openshift" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
