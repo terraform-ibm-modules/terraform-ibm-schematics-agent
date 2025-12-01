@@ -2,10 +2,10 @@
 package test
 
 import (
-	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
 
@@ -26,7 +26,7 @@ var validRegions = []string{
 func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 	t.Parallel()
 
-	region := validRegions[rand.Intn(len(validRegions))]
+	region := validRegions[common.CryptoIntn(len(validRegions))]
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                t,
@@ -52,7 +52,7 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 func TestRunKubernetesExampleInSchematics(t *testing.T) {
 	t.Parallel()
 
-	region := validRegions[rand.Intn(len(validRegions))]
+	region := validRegions[common.CryptoIntn(len(validRegions))]
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                t,
@@ -78,7 +78,7 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 func TestRunUpgradeSchematics(t *testing.T) {
 	t.Parallel()
 
-	region := validRegions[rand.Intn(len(validRegions))]
+	region := validRegions[common.CryptoIntn(len(validRegions))]
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                t,
