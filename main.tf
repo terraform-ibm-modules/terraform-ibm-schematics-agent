@@ -18,3 +18,40 @@ resource "ibm_schematics_agent" "schematics_agent_instance" {
 resource "ibm_schematics_agent_deploy" "schematics_agent_deploy" {
   agent_id = ibm_schematics_agent.schematics_agent_instance.id
 }
+
+resource "ibm_schematics_policy" "schematics_agent_policy" {
+  count = var.create_agent_policy ? 1 : 0
+
+  # Schematics Agent Policy parameters
+  name           = var.agent_policy_name
+  description    = var.agent_policy_description
+  kind           = var.agent_policy_kind
+  location       = var.agent_location
+  resource_group = var.agent_policy_resource_group_id
+  tags           = ["policy", "test"]
+
+  # Schematics agent parameters
+  target {
+    selector_kind = var.agent_policy_selector_kind
+    selector_ids  = [ibm_schematics_agent.schematics_agent_instance.id]
+  }
+
+  # Schematics workspace/actions parameters
+  parameter {
+    agent_assignment_policy_parameter {
+      selector_kind = "scoped"
+
+      selector_scope {
+        kind            = "workspace"
+        locations       = ["us-south"]
+        tags            = ["reg:us-south", "rg:r-sa-pol-resource-group"]
+        resource_groups = ["r-sa-pol-resource-group"]
+      }
+    }
+  }
+}
+
+data "ibm_schematics_policy" "schematics_policy_instance" {
+  count     = var.create_agent_policy ? 1 : 0
+  policy_id = ibm_schematics_policy.schematics_agent_policy[0].id
+}

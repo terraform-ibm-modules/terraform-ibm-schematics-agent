@@ -24,7 +24,8 @@ More information about the IBM Schematics Agent can be found [here](https://clou
 ## Overview
 * [terraform-ibm-schematics-agent](#terraform-ibm-schematics-agent)
 * [Examples](./examples)
-    * [Kubernetes example](./examples/kubernetes)
+    * <div style="display: inline-block;"><a href="./examples/kubernetes">Kubernetes example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=sa-kubernetes-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-schematics-agent/tree/main/examples/kubernetes" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/policy">Kubernetes example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=sa-policy-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-schematics-agent/tree/main/examples/policy" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
@@ -124,6 +125,8 @@ No modules.
 |------|------|
 | [ibm_schematics_agent.schematics_agent_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent) | resource |
 | [ibm_schematics_agent_deploy.schematics_agent_deploy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent_deploy) | resource |
+| [ibm_schematics_policy.schematics_agent_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_policy) | resource |
+| [ibm_schematics_policy.schematics_policy_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/schematics_policy) | data source |
 
 ### Inputs
 
@@ -132,13 +135,19 @@ No modules.
 | <a name="input_agent_description"></a> [agent\_description](#input\_agent\_description) | The schematics agent description. | `string` | `null` | no |
 | <a name="input_agent_location"></a> [agent\_location](#input\_agent\_location) | The location where the schematics agent is deployed in the user environment. | `string` | `"us-south"` | no |
 | <a name="input_agent_name"></a> [agent\_name](#input\_agent\_name) | The schematics agent name. | `string` | n/a | yes |
+| <a name="input_agent_policy_description"></a> [agent\_policy\_description](#input\_agent\_policy\_description) | The schematics agent policy description. | `string` | `null` | no |
+| <a name="input_agent_policy_kind"></a> [agent\_policy\_kind](#input\_agent\_policy\_kind) | The schematics agent policy for job execution. Acceptable values: `agent_assignment_policy`. | `string` | `"agent_assignment_policy"` | no |
+| <a name="input_agent_policy_name"></a> [agent\_policy\_name](#input\_agent\_policy\_name) | Name of the schematics agent policy. | `string` | `null` | no |
+| <a name="input_agent_policy_resource_group_id"></a> [agent\_policy\_resource\_group\_id](#input\_agent\_policy\_resource\_group\_id) | The resource group ID of the schematics agents policy resource group. | `string` | `"Default"` | no |
+| <a name="input_agent_policy_selector_kind"></a> [agent\_policy\_selector\_kind](#input\_agent\_policy\_selector\_kind) | Way to target the schematics agent from the policy. | `string` | `"ids"` | no |
 | <a name="input_agent_resource_group_id"></a> [agent\_resource\_group\_id](#input\_agent\_resource\_group\_id) | The resource group ID of the schematics resource group. | `string` | n/a | yes |
-| <a name="input_agent_version"></a> [agent\_version](#input\_agent\_version) | The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases | `string` | `"1.3.1"` | no |
+| <a name="input_agent_version"></a> [agent\_version](#input\_agent\_version) | The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases | `string` | `"1.5.0"` | no |
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | ID of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
 | <a name="input_cluster_resource_group_id"></a> [cluster\_resource\_group\_id](#input\_cluster\_resource\_group\_id) | Resource group ID of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
 | <a name="input_cos_bucket_name"></a> [cos\_bucket\_name](#input\_cos\_bucket\_name) | The COS bucket name to store the schematics agent logs. | `string` | n/a | yes |
 | <a name="input_cos_bucket_region"></a> [cos\_bucket\_region](#input\_cos\_bucket\_region) | The COS bucket region. | `string` | n/a | yes |
 | <a name="input_cos_instance_name"></a> [cos\_instance\_name](#input\_cos\_instance\_name) | The COS instance name where the bucket is created for the schematics agent logs. | `string` | n/a | yes |
+| <a name="input_create_agent_policy"></a> [create\_agent\_policy](#input\_create\_agent\_policy) | Flag when set to True creates schematics agent policy. | `bool` | `false` | no |
 | <a name="input_infra_type"></a> [infra\_type](#input\_infra\_type) | Type of target agent infrastructure. Allowed values: `ibm_kubernetes`, `ibm_openshift` and `ibm_satellite`. | `string` | `"ibm_kubernetes"` | no |
 | <a name="input_schematics_location"></a> [schematics\_location](#input\_schematics\_location) | List of locations supported by IBM Cloud Schematics service. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`. | `string` | `"us-south"` | no |
 
@@ -149,6 +158,7 @@ No modules.
 | <a name="output_agent_crn"></a> [agent\_crn](#output\_agent\_crn) | Schematics agent CRN. |
 | <a name="output_agent_id"></a> [agent\_id](#output\_agent\_id) | Schematics agent ID. |
 | <a name="output_log_url"></a> [log\_url](#output\_log\_url) | URL to the full schematics agent deployment job logs. |
+| <a name="output_schematics_agent_policy_id"></a> [schematics\_agent\_policy\_id](#output\_schematics\_agent\_policy\_id) | ID of the Schematics agent policy (if created) |
 | <a name="output_status_code"></a> [status\_code](#output\_status\_code) | Final result of the schematics agent deployment job. |
 | <a name="output_status_message"></a> [status\_message](#output\_status\_message) | The outcome of the schematics agent deployment job, in a formatted log string. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

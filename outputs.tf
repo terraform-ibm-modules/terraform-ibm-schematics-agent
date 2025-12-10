@@ -22,3 +22,8 @@ output "status_message" {
   description = "The outcome of the schematics agent deployment job, in a formatted log string."
   value       = ibm_schematics_agent_deploy.schematics_agent_deploy.status_message
 }
+
+output "schematics_agent_policy_id" {
+  description = "ID of the Schematics agent policy (if created)"
+  value       = var.create_agent_policy ? data.ibm_schematics_policy.schematics_policy_instance[0].id : null
+}
