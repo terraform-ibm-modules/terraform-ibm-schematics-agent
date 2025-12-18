@@ -3,7 +3,7 @@ resource "ibm_schematics_policy" "policy" {
 
   name           = each.value.name
   description    = try(each.value.description, null)
-  kind           = "agent_assignment_policy"
+  kind           = "agent_assignment_policy" # Only allowable value is agent_assignment_policy
   location       = try(each.value.location, null)
   resource_group = try(each.value.resource_group, null)
   tags           = try(each.value.tags, null)
