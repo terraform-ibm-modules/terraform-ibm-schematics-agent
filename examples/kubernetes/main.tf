@@ -100,4 +100,30 @@ module "schematics_agent" {
   agent_name                  = "${var.prefix}-agent"
   agent_resource_group_name   = module.resource_group.resource_group_name
   schematics_location         = var.region
+  schematics_policies = {
+    agent_policy = {
+      name           = "${var.prefix}-agent-policy"
+      description    = "${var.prefix}-agent-description"
+      location       = var.region
+      resource_group = module.resource_group.resource_group_id
+      tags           = var.resource_tags
+
+      target = [{
+        selector_kind = "ids"
+        selector_ids  = [module.schematics_agent.agent_id]
+      }]
+
+      parameter = [{
+        agent_assignment_policy_parameter = [{
+          selector_kind = "scoped"
+
+          selector_scope = [{
+            kind            = "workspace"
+            locations       = ["us-south"]
+            resource_groups = [module.resource_group.resource_group_name]
+          }]
+        }]
+      }]
+    }
+  }
 }

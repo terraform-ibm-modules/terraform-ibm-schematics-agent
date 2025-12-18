@@ -123,3 +123,9 @@ variable "disable_agent" {
   description = "User defined status of the agent. Set to `true` to disable the agent. By default the agent state will be enabled."
   default     = false
 }
+
+variable "schematics_policies" {
+  description = "Schematics agent policies to create"
+  type        = any
+  default     = {}
+}

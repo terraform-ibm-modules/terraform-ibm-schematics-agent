@@ -22,6 +22,8 @@ Refer [here](https://cloud.ibm.com/docs/schematics?topic=schematics-deploy-agent
 <!-- BEGIN OVERVIEW HOOK -->
 ## Overview
 * [terraform-ibm-schematics-agent](#terraform-ibm-schematics-agent)
+* [Submodules](./modules)
+    * [schematics-policy](./modules/schematics-policy)
 * [Examples](./examples)
     * <div style="display: inline-block;"><a href="./examples/kubernetes">Kubernetes example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=sa-kubernetes-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-schematics-agent/tree/main/examples/kubernetes" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
     * <div style="display: inline-block;"><a href="./examples/openshift">OpenShift example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=sa-openshift-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-schematics-agent/tree/main/examples/openshift" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
@@ -120,7 +122,9 @@ statement instead the previous block.
 
 ### Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_schematics_policy"></a> [schematics\_policy](#module\_schematics\_policy) | ./modules/schematics-policy | n/a |
 
 ### Resources
 
@@ -150,6 +154,7 @@ No modules.
 | <a name="input_infra_type"></a> [infra\_type](#input\_infra\_type) | Type of target agent infrastructure. Allowed values: `ibm_kubernetes`, `ibm_openshift` and `ibm_satellite`. | `string` | `"ibm_kubernetes"` | no |
 | <a name="input_run_destroy_resources_job"></a> [run\_destroy\_resources\_job](#input\_run\_destroy\_resources\_job) | Set this value to `false` if you do not want to destroy resources associated with the agent deployment. Defaults to `true`. | `bool` | `true` | no |
 | <a name="input_schematics_location"></a> [schematics\_location](#input\_schematics\_location) | The location to create the Schematics workspace. Allowed values are `us-south`, `us-east`, `eu-gb`, `eu-de`, `ca-tor`, `ca-mon`, `eu-fr2`. | `string` | `"us-south"` | no |
+| <a name="input_schematics_policies"></a> [schematics\_policies](#input\_schematics\_policies) | Schematics agent policies to create | `any` | `{}` | no |
 | <a name="input_use_schematics_private_endpoint"></a> [use\_schematics\_private\_endpoint](#input\_use\_schematics\_private\_endpoint) | Set to `true` to use IBM Cloud Schematics private endpoints. Requires the runtime to have access to the IBM Cloud private network. | `bool` | `false` | no |
 
 ### Outputs
@@ -159,6 +164,8 @@ No modules.
 | <a name="output_agent_crn"></a> [agent\_crn](#output\_agent\_crn) | Schematics agent CRN. |
 | <a name="output_agent_id"></a> [agent\_id](#output\_agent\_id) | Schematics agent ID. |
 | <a name="output_log_url"></a> [log\_url](#output\_log\_url) | URL to the full schematics agent deployment job logs. |
+| <a name="output_schematics_policies"></a> [schematics\_policies](#output\_schematics\_policies) | Schematics agent policies. |
+| <a name="output_schematics_policy_ids"></a> [schematics\_policy\_ids](#output\_schematics\_policy\_ids) | Schematics policy IDs |
 | <a name="output_status_code"></a> [status\_code](#output\_status\_code) | Final result of the schematics agent deployment job. |
 | <a name="output_status_message"></a> [status\_message](#output\_status\_message) | The outcome of the schematics agent deployment job, in a formatted log string. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
