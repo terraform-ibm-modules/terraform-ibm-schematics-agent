@@ -37,6 +37,7 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 		TarIncludePatterns: []string{"*.tf",
 			openshiftExampleDir + "/*.tf",
 			"scripts/*.sh",
+			"modules/schematics-policy/*.tf",
 		},
 	})
 
@@ -63,6 +64,7 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 		TarIncludePatterns: []string{"*.tf",
 			kubernetesExampleDir + "/*.tf",
 			"scripts/*.sh",
+			"modules/schematics-policy/*.tf",
 		},
 	})
 
@@ -89,6 +91,7 @@ func TestRunUpgradeSchematics(t *testing.T) {
 		TarIncludePatterns: []string{"*.tf",
 			openshiftExampleDir + "/*.tf",
 			"scripts/*.sh",
+			"modules/schematics-policy/*.tf",
 		},
 	})
 
