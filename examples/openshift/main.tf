@@ -110,7 +110,9 @@ module "schematics_agent" {
   agent_name                  = "${var.prefix}-agent"
   agent_resource_group_name   = module.resource_group.resource_group_name
   schematics_location         = var.region
-  # The following code creates a schematics policy which enables Schematics agent (target) to run on the selected workspaces (parameter).
+  # The following code creates a Schematics Agent Assignment Policy that:
+  # - Targets the Schematics agent created in this example
+  # - Assigns the agent to all workspaces in the given resource group and us-south region
   schematics_policies = {
     agent_policy = {
       name           = "${var.prefix}-agent-policy"
