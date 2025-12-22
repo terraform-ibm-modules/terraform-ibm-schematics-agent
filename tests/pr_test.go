@@ -19,6 +19,9 @@ var validRegions = []string{
 	"eu-de",
 	"eu-gb",
 	"us-east",
+	"eu-fr2",
+	"ca-mon",
+	"ca-tor",
 }
 
 func TestRunOpenShiftExampleInSchematics(t *testing.T) {

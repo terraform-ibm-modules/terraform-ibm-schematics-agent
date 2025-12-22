@@ -23,12 +23,7 @@ output "status_message" {
   value       = ibm_schematics_agent_deploy.schematics_agent_deploy.status_message
 }
 
-output "schematics_policy_ids" {
-  description = "Schematics policy IDs"
-  value       = module.schematics_policy.policy_ids
-}
-
-output "schematics_policies" {
-  description = "Schematics agent policies."
+output "schematics_policies_metadata" {
+  description = "Schematics agent policies metadata."
   value       = module.schematics_policy.policies
 }
