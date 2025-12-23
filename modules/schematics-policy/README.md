@@ -1,6 +1,6 @@
-# Schematics Agent Policy
+# Schematics Agent Policies
 
-This submodule creates and configures the Schematics Agent Policy. More info on working with the agent policies can be found [here](https://cloud.ibm.com/docs/schematics?topic=schematics-policy-manage&interface=ui).
+This submodule creates and configures the Schematics Agent policies. More info on working with the agent policies can be found [here](https://cloud.ibm.com/docs/schematics?topic=schematics-policy-manage&interface=ui).
 
 ### Usage
 
@@ -51,9 +51,6 @@ Manage > Access (IAM) > Access groups > Access policies.
     - IAM Services
         - **Schematics** service
             - `Writer` service access
-            - `Manager` service access
-        - **Kubernetes** Service
-            - `Administrator` platform access
             - `Manager` service access
 
 <!-- NO PERMISSIONS FOR MODULE

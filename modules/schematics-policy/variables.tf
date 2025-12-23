@@ -41,9 +41,9 @@ variable "schematics_policies" {
   validation {
     condition = alltrue([
       for _, p in var.schematics_policies : (
-      try(p.location, null) == null || contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-mon", "ca-tor"], try(p.location, null)))
+      try(p.location, null) == null || contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-mon", "ca-tor", "eu-fr2"], try(p.location, null)))
     ])
-    error_message = "Invalid Schematics policy location. Allowed values are: us-south, us-east, eu-gb, eu-de, ca-mon, ca-tor."
+    error_message = "Invalid Schematics policy location. Allowed values are: us-south, us-east, eu-gb, eu-de, ca-mon, ca-tor, eu-fr2."
   }
 
   validation {
@@ -83,13 +83,13 @@ variable "schematics_policies" {
           for ap in try(param.agent_assignment_policy_parameter, []) : [
             for scope in try(ap.selector_scope, []) : alltrue([
               for loc in try(scope.locations, []) :
-              contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-mon", "ca-tor"], loc)
+              contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-mon", "ca-tor", "eu-fr2"], loc)
             ])
           ]
         ]
       ]
     ]))
-    error_message = "Invalid selector_scope.locations in agent_assignment_policy_parameter. Allowed values are: us-south, us-east, eu-gb, eu-de, ca-mon, ca-tor."
+    error_message = "Invalid selector_scope.locations in agent_assignment_policy_parameter. Allowed values are: us-south, us-east, eu-gb, eu-de, ca-mon, ca-tor, eu-fr2."
   }
 
   validation {
@@ -136,12 +136,12 @@ variable "schematics_policies" {
         for t in try(p.target, []) : [
           for scope in try(t.selector_scope, []) : alltrue([
             for loc in try(scope.locations, []) :
-            contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-mon", "ca-tor"], loc)
+            contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-mon", "ca-tor", "eu-fr2"], loc)
           ])
         ]
       ]
       ])
     )
-    error_message = "Invalid target.selector_scope.locations. Allowed values are: us-south, us-east, eu-gb, eu-de, ca-mon, ca-tor."
+    error_message = "Invalid target.selector_scope.locations. Allowed values are: us-south, us-east, eu-gb, eu-de, ca-mon, ca-tor, eu-fr2."
   }
 }
