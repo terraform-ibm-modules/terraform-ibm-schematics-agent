@@ -173,101 +173,98 @@ variable "schematics_policies" {
   }
 
   validation {
-    condition = alltrue(flatten([
-      for _, p in var.schematics_policies : [
-        for param in try(p.parameter, []) : [
+    condition = alltrue([
+      for _, p in var.schematics_policies : alltrue([
+        for param in try(p.parameter, []) : alltrue([
           for ap in try(param.agent_assignment_policy_parameter, []) : (
             try(ap.selector_kind, null) == null || contains(["ids", "scoped"], try(ap.selector_kind, null))
           )
-        ]
-      ]
+        ])
       ])
-    )
+    ])
     error_message = "Invalid selector_kind in agent_assignment_policy_parameter. Allowed values are: ids, scoped."
   }
 
   validation {
-    condition = alltrue(flatten([
-      for _, p in var.schematics_policies : [
-        for param in try(p.parameter, []) : [
-          for ap in try(param.agent_assignment_policy_parameter, []) : [
+    condition = alltrue([
+      for _, p in var.schematics_policies : alltrue([
+        for param in try(p.parameter, []) : alltrue([
+          for ap in try(param.agent_assignment_policy_parameter, []) : alltrue([
             for scope in try(ap.selector_scope, []) : (
               try(scope.kind, null) == null || contains(["workspace", "action", "system", "environment", "blueprint"], try(scope.kind, null)
               )
-          )]
-        ]
-      ]
+          )])
+        ])
       ])
-    )
+    ])
     error_message = "Invalid selector_scope.kind in agent_assignment_policy_parameter. Allowed values are: workspace, action, system, environment, blueprint."
   }
 
   validation {
-    condition = alltrue(flatten([
-      for _, p in var.schematics_policies : [
-        for param in try(p.parameter, []) : [
-          for ap in try(param.agent_assignment_policy_parameter, []) : [
+    condition = alltrue([
+      for _, p in var.schematics_policies : alltrue([
+        for param in try(p.parameter, []) : alltrue([
+          for ap in try(param.agent_assignment_policy_parameter, []) : alltrue([
             for scope in try(ap.selector_scope, []) : alltrue([
               for loc in try(scope.locations, []) :
               contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-mon", "ca-tor", "eu-fr2"], loc)
             ])
-          ]
-        ]
-      ]
-    ]))
+          ])
+        ])
+      ])
+    ])
     error_message = "Invalid selector_scope.locations in agent_assignment_policy_parameter. Allowed values are: us-south, us-east, eu-gb, eu-de, ca-mon, ca-tor, eu-fr2."
   }
 
   validation {
-    condition = alltrue(flatten([
-      for _, p in var.schematics_policies : [
+    condition = alltrue([
+      for _, p in var.schematics_policies : alltrue([
         for sr in try(p.scoped_resources, []) : (
           try(sr.kind, null) == null || contains(["workspace", "action", "system", "environment", "blueprint"], try(sr.kind, null)
           )
         )
-      ]
-    ]))
+      ])
+    ])
     error_message = "Invalid scoped_resources.kind. Allowed values are: workspace, action, system, environment, blueprint."
   }
 
   validation {
-    condition = alltrue(flatten([
-      for _, p in var.schematics_policies : [
+    condition = alltrue([
+      for _, p in var.schematics_policies : alltrue([
         for t in try(p.target, []) : (
           try(t.selector_kind, null) == null || contains(["ids", "scoped"], try(t.selector_kind, null)
           )
         )
-      ]
-    ]))
+      ])
+    ])
     error_message = "Invalid target.selector_kind. Allowed values are: ids, scoped."
   }
 
   validation {
-    condition = alltrue(flatten([
-      for _, p in var.schematics_policies : [
-        for t in try(p.target, []) : [
+    condition = alltrue([
+      for _, p in var.schematics_policies : alltrue([
+        for t in try(p.target, []) : alltrue([
           for scope in try(t.selector_scope, []) : (
             try(scope.kind, null) == null || contains(["workspace", "action", "system", "environment", "blueprint"], try(scope.kind, null)
             )
           )
-        ]
-      ]
-    ]))
+        ])
+      ])
+    ])
     error_message = "Invalid target.selector_scope.kind. Allowed values are: workspace, action, system, environment, blueprint."
   }
 
   validation {
-    condition = alltrue(flatten([
-      for _, p in var.schematics_policies : [
-        for t in try(p.target, []) : [
+    condition = alltrue([
+      for _, p in var.schematics_policies : alltrue([
+        for t in try(p.target, []) : alltrue([
           for scope in try(t.selector_scope, []) : alltrue([
             for loc in try(scope.locations, []) :
             contains(["us-south", "us-east", "eu-gb", "eu-de", "ca-mon", "ca-tor", "eu-fr2"], loc)
           ])
-        ]
-      ]
+        ])
       ])
-    )
+    ])
     error_message = "Invalid target.selector_scope.locations. Allowed values are: us-south, us-east, eu-gb, eu-de, ca-mon, ca-tor, eu-fr2."
   }
 }
