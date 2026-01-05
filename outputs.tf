@@ -22,3 +22,8 @@ output "status_message" {
   description = "The outcome of the schematics agent deployment job, in a formatted log string."
   value       = ibm_schematics_agent_deploy.schematics_agent_deploy.status_message
 }
+
+output "schematics_policies_metadata" {
+  description = "Schematics agent policies metadata."
+  value       = module.schematics_policy.policies
+}
