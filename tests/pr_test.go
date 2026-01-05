@@ -19,8 +19,8 @@ var validRegions = []string{
 	"eu-de",
 	"eu-gb",
 	"us-east",
-	"ca-tor",
 	"ca-mon",
+	"ca-tor",
 }
 
 func TestRunOpenShiftExampleInSchematics(t *testing.T) {
@@ -29,14 +29,21 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 	region := validRegions[common.CryptoIntn(len(validRegions))]
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing:                t,
-		Prefix:                 "sa-ocp",
-		ResourceGroup:          resourceGroup,
+		Testing: t,
+		Prefix:  "sa-ocp",
+		/*
+		 Comment out the 'ResourceGroup' input to force this tests to create a unique resource group to ensure tests do
+		 not clash. This is due to the fact that the same resource group in the OpenShift Example is re-used for the
+		 policy, workspace and the Schematics agent which might create conflict with other tests in the same RG which are
+		 creating agent policies.
+		*/
+		//ResourceGroup:          resourceGroup,
 		TemplateFolder:         openshiftExampleDir,
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
 			openshiftExampleDir + "/*.tf",
 			"scripts/*.sh",
+			"modules/schematics-policy/*.tf",
 		},
 	})
 
@@ -63,6 +70,7 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 		TarIncludePatterns: []string{"*.tf",
 			kubernetesExampleDir + "/*.tf",
 			"scripts/*.sh",
+			"modules/schematics-policy/*.tf",
 		},
 	})
 
@@ -75,20 +83,27 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
 }
 
-func TestRunUpgradeSchematics(t *testing.T) {
+func TestRunOpenShiftUpgradeSchematics(t *testing.T) {
 	t.Parallel()
 
 	region := validRegions[common.CryptoIntn(len(validRegions))]
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing:                t,
-		Prefix:                 "sa-ocp-upg",
-		ResourceGroup:          resourceGroup,
+		Testing: t,
+		Prefix:  "sa-ocp-upg",
+		/*
+		 Comment out the 'ResourceGroup' input to force this tests to create a unique resource group to ensure tests do
+		 not clash. This is due to the fact that the same resource group in the OpenShift Example is re-used for the
+		 policy, workspace and the Schematics agent which might create conflict with other tests in the same RG which are
+		 creating agent policies.
+		*/
+		//ResourceGroup:          resourceGroup,
 		TemplateFolder:         openshiftExampleDir,
 		WaitJobCompleteMinutes: 360,
 		TarIncludePatterns: []string{"*.tf",
 			openshiftExampleDir + "/*.tf",
 			"scripts/*.sh",
+			"modules/schematics-policy/*.tf",
 		},
 	})
 
