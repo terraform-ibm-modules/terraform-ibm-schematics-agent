@@ -93,3 +93,8 @@ resource "null_resource" "agent_deployment_status" {
     }
   }
 }
+
+module "schematics_policy" {
+  source              = "./modules/schematics-policy"
+  schematics_policies = var.schematics_policies
+}
