@@ -73,8 +73,12 @@ def fetch_agent_versions(iam_token, api_endpoint):
     parsed = urlparse(api_endpoint)
     host = parsed.hostname
 
+    if iam_token.startswith("Bearer "):
+        auth_header = iam_token
+    else:
+        auth_header = f"Bearer {iam_token}"
     headers = {
-        "Authorization": f"Bearer {iam_token}",
+        "Authorization": auth_header,
         "Accept": "application/json",
     }
 
