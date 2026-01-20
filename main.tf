@@ -51,16 +51,25 @@ data "ibm_iam_auth_token" "tokendata" {
 
 locals {
   sensitive_tokendata = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
+  binaries_path       = "/tmp"
 }
 
 ############################################################################
 # Verify status of Schematics Agent deployment
 ############################################################################
 
-resource "null_resource" "agent_deployment_status" {
+resource "terraform_data" "install_required_binaries" {
+  count = var.install_required_binaries ? 1 : 0
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/verify_agent_status.sh"
+    command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+resource "null_resource" "agent_deployment_status" {
+  depends_on = [terraform_data.install_required_binaries]
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/verify_agent_status.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_ACCESS_TOKEN = local.sensitive_tokendata
