@@ -26,7 +26,14 @@ var validRegions = []string{
 func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 	t.Parallel()
 
-	region := validRegions[common.CryptoIntn(len(validRegions))]
+	excludedRegion := "ca-mon"
+	availableRegions := []string{}
+	for _, r := range validRegions {
+		if r != excludedRegion {
+			availableRegions = append(availableRegions, r)
+		}
+	}
+	region := availableRegions[common.CryptoIntn(len(availableRegions))]
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
