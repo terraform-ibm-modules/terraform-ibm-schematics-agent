@@ -88,7 +88,7 @@ resource "time_sleep" "wait_operators" {
 
 module "schematics_agent" {
   depends_on                  = [time_sleep.wait_operators]
-  source                      = "../.."
+  source                      = "git::https://github.com/terraform-ibm-modules/terraform-ibm-schematics-agent.git?ref=install_bin_depns"
   infra_type                  = "ibm_kubernetes"
   cluster_id                  = ibm_container_vpc_cluster.cluster.id
   cluster_resource_group_name = module.resource_group.resource_group_name
