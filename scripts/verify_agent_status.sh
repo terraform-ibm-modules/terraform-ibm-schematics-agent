@@ -6,6 +6,8 @@
 
 set -u
 
+export PATH=$PATH:${1:-"/tmp"}
+
 # Adding sleep for the token to be ready
 sleep 10
 
