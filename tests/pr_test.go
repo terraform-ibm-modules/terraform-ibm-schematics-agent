@@ -2,6 +2,11 @@
 package test
 
 import (
+	"bytes"
+	"fmt"
+	"log"
+	"os"
+	"os/exec"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -21,6 +26,31 @@ var validRegions = []string{
 	"us-east",
 	"ca-mon",
 	"ca-tor",
+}
+
+func validateEnvVariable(t *testing.T, varName string) string {
+	val, present := os.LookupEnv(varName)
+	require.True(t, present, "%s environment variable not set", varName)
+	require.NotEqual(t, "", val, "%s environment variable is empty", varName)
+	return val
+}
+
+func createContainersApikey(t *testing.T, region string, rg string) {
+
+	err := os.Setenv("IBMCLOUD_API_KEY", validateEnvVariable(t, "TF_VAR_ibmcloud_api_key"))
+	require.NoError(t, err, "Failed to set IBMCLOUD_API_KEY environment variable")
+	scriptPath := "../common-dev-assets/scripts/iks-api-key-reset/reset_iks_api_key.sh"
+	cmd := exec.Command("bash", scriptPath, region, rg)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	// Execute the command
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Failed to execute script: %v\nStderr: %s", err, stderr.String())
+	}
+	// Print script output
+	fmt.Println(stdout.String())
 }
 
 func TestRunOpenShiftExampleInSchematics(t *testing.T) {
@@ -53,6 +83,9 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 		{Name: "region", Value: region, DataType: "string"},
 	}
 
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, options.Region, options.ResourceGroup)
+
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
 }
 
@@ -79,6 +112,9 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
 	}
+
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, options.Region, options.ResourceGroup)
 
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
 }
@@ -112,6 +148,9 @@ func TestRunOpenShiftUpgradeSchematics(t *testing.T) {
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
 	}
+
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, options.Region, options.ResourceGroup)
 
 	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
 }
