@@ -89,7 +89,7 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
-		{Name: "resourceGroup", Value: uniqueResourceGroup, DataType: "string"},
+		{Name: "resource_group", Value: uniqueResourceGroup, DataType: "string"},
 	}
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
@@ -158,7 +158,7 @@ func TestRunOpenShiftUpgradeSchematics(t *testing.T) {
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
-		{Name: "resourceGroup", Value: uniqueResourceGroup, DataType: "string"},
+		{Name: "resource_group", Value: uniqueResourceGroup, DataType: "string"},
 	}
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
