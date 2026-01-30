@@ -88,6 +88,11 @@ variable "agent_version" {
   type        = string
   description = "The schematics agent version. If not specified (null), the latest supported version is used. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases"
   default     = null
+
+  validation {
+    condition     = var.agent_version == null || contains(local.supported_agent_versions, var.agent_version)
+    error_message = "Agent version '${var.agent_version == null ? "null" : var.agent_version}' is not supported. Valid versions: ${join(", ", local.supported_agent_versions)}"
+  }
 }
 
 # See, https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6569

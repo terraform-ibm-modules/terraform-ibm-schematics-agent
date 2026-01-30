@@ -17,9 +17,6 @@ locals {
   supported_agent_versions = jsondecode(data.external.agent_versions.result["versions"])
   latest_agent_version     = local.supported_agent_versions[0] # Sorted descending by script
   agent_version            = var.agent_version != null ? var.agent_version : local.latest_agent_version
-
-  # tflint-ignore: terraform_unused_declarations
-  agent_version_valid = contains(local.supported_agent_versions, local.agent_version) ? true : tobool("Agent version '${local.agent_version}' is not supported. Valid versions: ${join(", ", local.supported_agent_versions)}")
 }
 
 ############################################################################
