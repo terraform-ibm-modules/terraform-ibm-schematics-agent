@@ -4,6 +4,7 @@ package test
 import (
 	"bytes"
 	"fmt"
+	"github.com/google/uuid"
 	"log"
 	"os"
 	"os/exec"
@@ -26,6 +27,11 @@ var validRegions = []string{
 	"us-east",
 	"ca-mon",
 	"ca-tor",
+}
+
+func generateUniqueResourceGroupName(baseName string) string {
+	id := uuid.New().String()[:8]
+	return fmt.Sprintf("%s-%s", baseName, id)
 }
 
 func validateEnvVariable(t *testing.T, varName string) string {
@@ -77,14 +83,17 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 		},
 	})
 
+	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
+
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
+		{Name: "resourceGroup", Value: uniqueResourceGroup, DataType: "string"},
 	}
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
-	createContainersApikey(t, options.Region, options.ResourceGroup)
+	createContainersApikey(t, options.Region, uniqueResourceGroup)
 
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
 }
@@ -143,10 +152,13 @@ func TestRunOpenShiftUpgradeSchematics(t *testing.T) {
 		},
 	})
 
+	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
+
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
+		{Name: "resourceGroup", Value: uniqueResourceGroup, DataType: "string"},
 	}
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
