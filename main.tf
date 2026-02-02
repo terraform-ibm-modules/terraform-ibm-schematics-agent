@@ -61,7 +61,9 @@ locals {
 resource "terraform_data" "install_required_binaries" {
   count = var.install_required_binaries ? 1 : 0
   triggers_replace = {
-  script_hash = filesha256("${path.module}/scripts/install-binaries.sh")
+    region      = var.agent_location
+    agent_id    = ibm_schematics_agent.schematics_agent_instance.id
+    private_env = var.use_schematics_private_endpoint
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
