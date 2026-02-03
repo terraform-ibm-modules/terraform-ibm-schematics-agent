@@ -30,7 +30,6 @@ var validRegions = []string{
 	"eu-de",
 	"eu-gb",
 	"us-east",
-	"ca-mon",
 	"ca-tor",
 }
 

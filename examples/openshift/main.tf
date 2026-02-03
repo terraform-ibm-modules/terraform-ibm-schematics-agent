@@ -70,7 +70,7 @@ locals {
     {
       subnet_prefix    = "default"
       pool_name        = "default"
-      machine_type     = "bx3d.4x20"
+      machine_type     = "bx2.4x16"
       workers_per_zone = 2 # minimum of 2 is allowed when using single zone
       operating_system = "RHCOS"
     }

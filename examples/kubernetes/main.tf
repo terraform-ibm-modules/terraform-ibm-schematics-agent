@@ -59,7 +59,7 @@ resource "ibm_is_public_gateway" "gateway" {
 resource "ibm_container_vpc_cluster" "cluster" {
   name              = "${var.prefix}-cluster"
   vpc_id            = ibm_is_vpc.vpc.id
-  flavor            = "bx3d.4x20"
+  flavor            = "bx2.4x16"
   resource_group_id = module.resource_group.resource_group_id
   worker_count      = 2
   zones {
