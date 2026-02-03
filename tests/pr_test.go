@@ -7,15 +7,13 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/files"
-	"github.com/gruntwork-io/terratest/modules/logger"
-	"github.com/gruntwork-io/terratest/modules/random"
-	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/google/uuid"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
@@ -25,12 +23,30 @@ const resourceGroup = "geretain-test-resources"
 const kubernetesExampleDir = "examples/kubernetes"
 const openshiftExampleDir = "examples/openshift"
 
+var sharedInfoSvc *cloudinfo.CloudInfoService
+
 var validRegions = []string{
 	"us-south",
 	"eu-de",
 	"eu-gb",
 	"us-east",
 	"ca-tor",
+}
+
+// TestMain will be run before any parallel tests, used to read data from yaml for use with tests
+func TestMain(m *testing.M) {
+	var err error
+	sharedInfoSvc, err = cloudinfo.NewCloudInfoServiceFromEnv("TF_VAR_ibmcloud_api_key", cloudinfo.CloudInfoServiceOptions{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	os.Exit(m.Run())
+}
+
+func generateUniqueResourceGroupName(baseName string) string {
+	id := uuid.New().String()[:8]
+	return fmt.Sprintf("%s-%s", baseName, id)
 }
 
 func validateEnvVariable(t *testing.T, varName string) string {
@@ -58,49 +74,14 @@ func createContainersApikey(t *testing.T, region string, rg string) {
 	fmt.Println(stdout.String())
 }
 
-func setupTerraform(t *testing.T, prefix, realTerraformDir string) *terraform.Options {
-	tempTerraformDir, err := files.CopyTerraformFolderToTemp(realTerraformDir, prefix)
-	require.NoError(t, err, "Failed to create temporary Terraform folder")
-
-	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		TerraformDir: tempTerraformDir,
-		Vars: map[string]interface{}{
-			"prefix": prefix,
-		},
-		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
-		// This is the same as setting the -upgrade=true flag with terraform.
-		Upgrade: true,
-	})
-
-	terraform.WorkspaceSelectOrNew(t, existingTerraformOptions, prefix)
-	_, err = terraform.InitAndApplyE(t, existingTerraformOptions)
-	require.NoError(t, err, "Init and Apply of temp existing resource failed")
-
-	return existingTerraformOptions
-}
-
-func cleanupTerraform(t *testing.T, options *terraform.Options, prefix string) {
-	if t.Failed() && strings.ToLower(os.Getenv("DO_NOT_DESTROY_ON_FAILURE")) == "true" {
-		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
-		return
-	}
-	logger.Log(t, "START: Destroy (existing resources)")
-	terraform.Destroy(t, options)
-	terraform.WorkspaceDelete(t, options, prefix)
-	logger.Log(t, "END: Destroy (existing resources)")
-}
-
 func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 	t.Parallel()
 
 	region := validRegions[common.CryptoIntn(len(validRegions))]
-	// Provision resources first
-	prefix := fmt.Sprintf("sa-ocp-%s", strings.ToLower(random.UniqueId()))
-	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
-		Prefix:  prefix,
+		Prefix:  "sa-ocp",
 		/*
 		 Comment out the 'ResourceGroup' input to force this tests to create a unique resource group to ensure tests do
 		 not clash. This is due to the fact that the same resource group in the OpenShift Example is re-used for the
@@ -113,23 +94,25 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 		TarIncludePatterns: []string{"*.tf",
 			openshiftExampleDir + "/*.tf",
 			"scripts/*.sh",
-			"scripts/*.py",
 			"modules/schematics-policy/*.tf",
 		},
 	})
+
+	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
-		{Name: "resource_group", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+		{Name: "resource_group", Value: uniqueResourceGroup, DataType: "string"},
 	}
 
-	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
-	createContainersApikey(t, options.Region, terraform.Output(t, existingTerraformOptions, "resource_group_name"))
-
-	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
-	cleanupTerraform(t, existingTerraformOptions, prefix)
+	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
+		// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+		createContainersApikey(t, options.Region, uniqueResourceGroup)
+		return options.RunSchematicTest()
+	})
+	assert.Nil(t, err, "This should not have errored")
 }
 
 func TestRunKubernetesExampleInSchematics(t *testing.T) {
@@ -146,7 +129,6 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 		TarIncludePatterns: []string{"*.tf",
 			kubernetesExampleDir + "/*.tf",
 			"scripts/*.sh",
-			"scripts/*.py",
 			"modules/schematics-policy/*.tf",
 		},
 	})
@@ -161,16 +143,12 @@ func TestRunKubernetesExampleInSchematics(t *testing.T) {
 	createContainersApikey(t, options.Region, options.ResourceGroup)
 
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
-
 }
 
 func TestRunOpenShiftUpgradeSchematics(t *testing.T) {
 	t.Parallel()
 
 	region := validRegions[common.CryptoIntn(len(validRegions))]
-	// Provision resources first
-	prefix := fmt.Sprintf("sa-ocp-upg-%s", strings.ToLower(random.UniqueId()))
-	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
@@ -187,21 +165,23 @@ func TestRunOpenShiftUpgradeSchematics(t *testing.T) {
 		TarIncludePatterns: []string{"*.tf",
 			openshiftExampleDir + "/*.tf",
 			"scripts/*.sh",
-			"scripts/*.py",
 			"modules/schematics-policy/*.tf",
 		},
 	})
+
+	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
-		{Name: "resource_group", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+		{Name: "resource_group", Value: uniqueResourceGroup, DataType: "string"},
 	}
-
-	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
-	createContainersApikey(t, options.Region, terraform.Output(t, existingTerraformOptions, "resource_group_name"))
-
-	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
-	cleanupTerraform(t, existingTerraformOptions, prefix)
+	
+	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
+		// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+		createContainersApikey(t, options.Region, uniqueResourceGroup)
+		return options.RunSchematicUpgradeTest()
+	})
+	assert.Nil(t, err, "This should not have errored")
 }
