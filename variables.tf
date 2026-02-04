@@ -86,13 +86,12 @@ variable "use_schematics_private_endpoint" {
 
 variable "agent_version" {
   type        = string
-  description = "The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases"
-  nullable    = false
-  default     = "1.6.0"
+  description = "The schematics agent version. If not specified (null), the latest supported version is used. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases"
+  default     = null
 
   validation {
-    condition     = contains(["1.6.0", "1.5.0", "1.4.0", "1.3.1", "1.3.0", "1.2.0", "1.1.1", "1.1.0", "1.0.0", ], var.agent_version)
-    error_message = "Agent version provided is not supported."
+    condition     = var.agent_version == null || contains(local.supported_agent_versions, var.agent_version)
+    error_message = "Agent version '${var.agent_version == null ? "null" : var.agent_version}' is not supported. Valid versions: ${join(", ", local.supported_agent_versions)}"
   }
 }
 

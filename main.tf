@@ -1,3 +1,23 @@
+########################################################################################################################
+# Get Schematics Agent Versions
+########################################################################################################################
+
+data "ibm_iam_auth_token" "token" {}
+
+data "external" "agent_versions" {
+  program = ["python3", "${path.module}/scripts/get_agent_versions.py"]
+  query = {
+    IAM_TOKEN   = sensitive(data.ibm_iam_auth_token.token.iam_access_token)
+    REGION      = var.schematics_location
+    PRIVATE_ENV = tostring(var.use_schematics_private_endpoint)
+  }
+}
+
+locals {
+  supported_agent_versions = jsondecode(data.external.agent_versions.result["versions"])
+  latest_agent_version     = local.supported_agent_versions[0] # Sorted descending by script
+  agent_version            = var.agent_version != null ? var.agent_version : local.latest_agent_version
+}
 
 ############################################################################
 # Create Schematics Agent
@@ -27,7 +47,7 @@ resource "ibm_schematics_agent" "schematics_agent_instance" {
   name                  = var.agent_name
   resource_group        = var.agent_resource_group_name
   schematics_location   = var.schematics_location
-  version               = var.agent_version
+  version               = local.agent_version
   tags                  = var.agent_tags
   run_destroy_resources = var.run_destroy_resources_job ? 1 : 0
 
