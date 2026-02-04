@@ -118,6 +118,7 @@ statement instead the previous block.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
+| <a name="requirement_external"></a> [external](#requirement\_external) | >= 2.3.0, < 3.0.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.70.0, < 2.0.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1, < 4.0.0 |
 
@@ -134,6 +135,8 @@ statement instead the previous block.
 | [ibm_schematics_agent.schematics_agent_instance](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent) | resource |
 | [ibm_schematics_agent_deploy.schematics_agent_deploy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_agent_deploy) | resource |
 | [null_resource.agent_deployment_status](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [external_external.agent_versions](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
+| [ibm_iam_auth_token.token](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/iam_auth_token) | data source |
 | [ibm_iam_auth_token.tokendata](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/iam_auth_token) | data source |
 
 ### Inputs
@@ -145,7 +148,7 @@ statement instead the previous block.
 | <a name="input_agent_name"></a> [agent\_name](#input\_agent\_name) | The schematics agent name. | `string` | n/a | yes |
 | <a name="input_agent_resource_group_name"></a> [agent\_resource\_group\_name](#input\_agent\_resource\_group\_name) | The resource group name for the schematics agent. | `string` | n/a | yes |
 | <a name="input_agent_tags"></a> [agent\_tags](#input\_agent\_tags) | The list of tags to be added to the agent. | `list(string)` | `[]` | no |
-| <a name="input_agent_version"></a> [agent\_version](#input\_agent\_version) | The schematics agent version. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases | `string` | `"1.6.0"` | no |
+| <a name="input_agent_version"></a> [agent\_version](#input\_agent\_version) | The schematics agent version. If not specified (null), the latest supported version is used. More info: https://cloud.ibm.com/docs/schematics?topic=schematics-update-agent-overview&interface=ui#agent_version-releases | `string` | `null` | no |
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | ID of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
 | <a name="input_cluster_resource_group_name"></a> [cluster\_resource\_group\_name](#input\_cluster\_resource\_group\_name) | The resource group name of the target cluster where the schematics agent will be installed. | `string` | n/a | yes |
 | <a name="input_cos_bucket_name"></a> [cos\_bucket\_name](#input\_cos\_bucket\_name) | The Object Storage bucket name to store the schematics agent logs. | `string` | n/a | yes |
