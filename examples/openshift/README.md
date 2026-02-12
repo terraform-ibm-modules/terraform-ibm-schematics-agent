@@ -8,10 +8,25 @@
 An end-to-end example that provisions the following:
 * A new resource group if one is not passed in.
 * An Object Storage instance and a bucket.
-* A basic VPC and subnet with public gateway enabled.
-* An IBM VPC Gen2 OpenShift cluster with 3 worker nodes and flavor "bx2.4x16".
+* A basic VPC and subnet with public gateway enabled (unless `private_only_cluster` is set to `true`).
+* An IBM VPC Gen2 OpenShift cluster with 2 worker nodes and flavor "bx2.4x16".
 * Creates and deploy the Schematics agent on the cluster.
 * Creates the Schematics agent policy for the agent and bind it with the Schematics workspace.
+
+## Private Cluster Deployment
+
+This example supports deploying to a private-only OpenShift cluster by setting `private_only_cluster = true`.
+
+When enabled:
+- No public gateway is created
+- Outbound traffic protection is enabled on the cluster (blocks public internet access)
+
+**Important Notes:**
+- Public internet access is **NOT required** to install or run the Schematics agent
+- IBM Cloud services (Schematics, Cloud Object Storage) remain accessible via private service endpoints
+- If your Terraform configurations pull modules or providers from the public internet, you must either:
+  - Configure a [private registry](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-registry-overview) for Terraform providers
+  - Set up a proxy to allow controlled outbound access
 
 <!-- BEGIN SCHEMATICS DEPLOY TIP HOOK -->
 :information_source: Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab
