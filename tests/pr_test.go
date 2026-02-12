@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -58,6 +59,7 @@ func validateEnvVariable(t *testing.T, varName string) string {
 
 func createContainersApikey(t *testing.T, region string, rg string) {
 
+	time.Sleep(5 * time.Second)
 	err := os.Setenv("IBMCLOUD_API_KEY", validateEnvVariable(t, "TF_VAR_ibmcloud_api_key"))
 	require.NoError(t, err, "Failed to set IBMCLOUD_API_KEY environment variable")
 	scriptPath := "../common-dev-assets/scripts/iks-api-key-reset/reset_iks_api_key.sh"
