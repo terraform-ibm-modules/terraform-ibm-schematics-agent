@@ -267,3 +267,10 @@ variable "schematics_policies" {
     error_message = "Invalid target.selector_scope.locations. Allowed values are: us-south, us-east, eu-gb, eu-de, ca-mon, ca-tor, eu-fr2."
   }
 }
+
+variable "install_required_binaries" {
+  type        = bool
+  default     = true
+  description = "When set to true, a script will run to check if `jq` exist on the runtime and if not attempt to download it from the public internet and install it to /tmp. Set to false to skip running this script."
+  nullable    = false
+}
