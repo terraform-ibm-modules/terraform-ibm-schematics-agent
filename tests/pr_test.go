@@ -108,6 +108,7 @@ func TestRunOpenShiftExampleInSchematics(t *testing.T) {
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "region", Value: region, DataType: "string"},
 		{Name: "resource_group", Value: uniqueResourceGroup, DataType: "string"},
+		{Name: "private_only_cluster", Value: "true", DataType: "bool"},
 	}
 
 	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
