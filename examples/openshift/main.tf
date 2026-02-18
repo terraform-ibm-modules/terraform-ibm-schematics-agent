@@ -42,10 +42,12 @@ resource "ibm_is_subnet" "subnet" {
   zone                     = "${var.region}-1"
   total_ipv4_address_count = 256
   resource_group           = module.resource_group.resource_group_id
-  public_gateway           = ibm_is_public_gateway.gateway.id
+  # Only attach public gateway for non-private clusters
+  public_gateway = var.private_only_cluster ? null : ibm_is_public_gateway.gateway[0].id
 }
 
 resource "ibm_is_public_gateway" "gateway" {
+  count          = var.private_only_cluster ? 0 : 1
   name           = "${var.prefix}-gateway-1"
   vpc            = ibm_is_vpc.vpc.id
   resource_group = module.resource_group.resource_group_id
@@ -88,9 +90,13 @@ module "ocp_base" {
   vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = local.worker_pools
-  # Allows outbound internet access for your workspace runs to be able to pull terraform providers from the internet. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-infrastructure-overview#agents-infra-workspace)
-  # If you want to deploy a fully private cluster, you must configure private registries so Terraform providers can be downloaded. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-registry-overview&interface=terraform)
-  disable_outbound_traffic_protection = true
+  # PRIVATE CLUSTER CONFIGURATION:
+  # - When private_only_cluster=false (default): allows outbound internet access for pulling Terraform providers.
+  #   Learn more: https://cloud.ibm.com/docs/schematics?topic=schematics-agent-infrastructure-overview#agents-infra-workspace
+  # - When private_only_cluster=true: blocks public internet but IBM Cloud services (Schematics, COS) remain
+  #   accessible via private endpoints. Configure private registries if your Terraform needs external providers.
+  #   Learn more: https://cloud.ibm.com/docs/schematics?topic=schematics-agent-registry-overview
+  disable_outbound_traffic_protection = !var.private_only_cluster
 }
 
 ##############################################################################
