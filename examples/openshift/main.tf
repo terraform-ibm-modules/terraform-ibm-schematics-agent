@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos" {
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "10.16.5"
+  version                = "10.16.7"
   resource_group_id      = module.resource_group.resource_group_id
   region                 = var.region
   cos_instance_name      = "${var.prefix}-cos"
@@ -80,7 +80,7 @@ locals {
 
 module "ocp_base" {
   source               = "terraform-ibm-modules/base-ocp-vpc/ibm"
-  version              = "3.89.0"
+  version              = "3.90.0"
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   tags                 = var.resource_tags
