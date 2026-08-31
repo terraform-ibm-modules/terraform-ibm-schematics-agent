@@ -69,6 +69,12 @@ resource "ibm_container_vpc_cluster" "cluster" {
   # Allows outbound internet access for your workspace runs to be able to pull terraform providers from the internet. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-infrastructure-overview#agents-infra-workspace)
   # If you want to deploy a fully private cluster, you must configure private registries so Terraform providers can be downloaded. [Learn more](https://cloud.ibm.com/docs/schematics?topic=schematics-agent-registry-overview&interface=terraform)
   disable_outbound_traffic_protection = true
+
+  timeouts {
+    delete = "3h"
+    create = "3h"
+    update = "3h"
+  }
 }
 
 data "ibm_container_cluster_config" "cluster_config" {

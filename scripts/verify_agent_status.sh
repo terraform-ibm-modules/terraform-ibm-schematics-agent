@@ -64,6 +64,7 @@ while ((ATTEMPT < MAX_ATTEMPTS)); do
     else
         sleep 30
         echo "Unknown status. Retrying in 30 secs..!!"
+        echo "Status code is $status_code and result is $result."
     fi
 done
 
