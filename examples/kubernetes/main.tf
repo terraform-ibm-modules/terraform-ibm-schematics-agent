@@ -15,6 +15,11 @@ module "resource_group" {
 ##############################################################################
 
 module "cos" {
+  # depends_on time_sleep.wait_operators so that on destroy, Terraform waits
+  # for the agent (which depends on wait_operators) to be fully gone before
+  # touching the COS bucket. The destroy_duration on wait_operators adds an
+  # extra buffer after the agent is deleted before COS deletion begins.
+  depends_on             = [time_sleep.wait_operators]
   source                 = "terraform-ibm-modules/cos/ibm"
   version                = "10.17.19"
   resource_group_id      = module.resource_group.resource_group_id
@@ -82,10 +87,13 @@ data "ibm_container_cluster_config" "cluster_config" {
   resource_group_id = module.resource_group.resource_group_id
 }
 
-# Sleep to allow RBAC sync on cluster
+# On create: sleep to allow RBAC sync on cluster.
+# On destroy: adds a 60s buffer after the agent is deleted and before COS
+# is destroyed, since module.cos depends_on this resource.
 resource "time_sleep" "wait_operators" {
-  depends_on      = [data.ibm_container_cluster_config.cluster_config]
-  create_duration = "60s"
+  depends_on       = [data.ibm_container_cluster_config.cluster_config]
+  create_duration  = "60s"
+  destroy_duration = "60s"
 }
 ##############################################################################
 # Create and deploy the Schematics agent
