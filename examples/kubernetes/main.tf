@@ -84,8 +84,9 @@ data "ibm_container_cluster_config" "cluster_config" {
 
 # Sleep to allow RBAC sync on cluster
 resource "time_sleep" "wait_operators" {
-  depends_on      = [data.ibm_container_cluster_config.cluster_config]
-  create_duration = "60s"
+  depends_on       = [data.ibm_container_cluster_config.cluster_config]
+  create_duration  = "60s"
+  destroy_duration = "60s"
 }
 ##############################################################################
 # Create and deploy the Schematics agent
