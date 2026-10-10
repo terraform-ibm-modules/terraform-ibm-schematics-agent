@@ -64,7 +64,7 @@ statement instead the previous block.
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.70.0, < 3.0.0 |
 
@@ -75,18 +75,18 @@ No modules.
 ### Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [ibm_schematics_policy.policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/schematics_policy) | resource |
 
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_schematics_policies"></a> [schematics\_policies](#input\_schematics\_policies) | Schematics agent policies to create | <pre>map(object({<br/>    name           = string<br/>    description    = optional(string)<br/>    location       = optional(string)<br/>    resource_group = optional(string)<br/>    tags           = optional(list(string), [])<br/><br/>    scoped_resources = optional(list(object({<br/>      id   = optional(string)<br/>      kind = optional(string)<br/>    })), [])<br/><br/>    target = optional(list(object({<br/>      selector_kind = optional(string)<br/>      selector_ids  = optional(list(string))<br/>      selector_scope = optional(list(object({<br/>        kind            = optional(string)<br/>        locations       = optional(list(string))<br/>        resource_groups = optional(list(string))<br/>        tags            = optional(list(string))<br/>      })), [])<br/>    })), [])<br/><br/>    parameter = optional(list(object({<br/>      agent_assignment_policy_parameter = optional(list(object({<br/>        selector_kind = optional(string)<br/>        selector_ids  = optional(list(string))<br/>        selector_scope = optional(list(object({<br/>          kind            = optional(string)<br/>          locations       = optional(list(string))<br/>          resource_groups = optional(list(string))<br/>          tags            = optional(list(string))<br/>        })), [])<br/>      })), [])<br/>    })), [])<br/>  }))</pre> | `{}` | no |
 
 ### Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_policies"></a> [policies](#output\_policies) | Schematics policy resources |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
